@@ -233,5 +233,32 @@ start_pages
 ####### TASK E) visits ~ impressions#######
 
 
+###### SOLUTIONS #####
+# Solution of a)
+p1
+# Answer: The most used pages have all more impressions than views. The most
+# used page was "covid-19-berlin-verteilung-den-bezirken-gesamtübersicht". Additionally,
+# there were three more covid-19 pages in the top 10. I think this is because the 
+# pandemic situation had much publicity in the last years. Other data sets which are used more often,
+# were the "liste-der-häufigen-vornamen". The lists of the years 2018 to 2020 are in the top 10.
+# What are page visits and page impression? A page visit is counted, if a person loads the page.
+
+# Solution of b)
+p2
+# Answer: It's difficult to provide information of the 10 least used ...
+
+# Solution of c)
+# Please start the shiny app
+
+# Solution of d)
+p3 # and Answer: There are always more or equal impressions than visits. That means
+# every visit is a impression, but a visit can have multiple impressions. Looking
+# at the relationship, we can see that more visits result in more impressions.
+
+# Solution of e)
+start_pages
+
+
+
 
 
