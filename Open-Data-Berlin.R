@@ -154,14 +154,15 @@ fun_bar_chart <- function(data_enr_temp, number_to_display, decreasing = T) {
   
   # Get the 10 highest/lowest per class
   top10 <- data_enr_temp[which(data_enr_temp$page %in% head(data_enr_temp, number_to_display)$page),]
-  
+  top10 <- top10[order(top10$sum, decreasing = T), ]
   # Make two fields for every variable of each page
-  melted <- melt(top10[,c("page", "sum_v", "sum_pi", "sum")], id="page")
-  #melted <- melted[order(-melted$variable, -melted$value, decreasing = F), ]
+  melted <- melt(top10[,c("page", "sum_v", "sum_pi")], id="page")
   
-  # Make a factor to order the data by the number of visits
-  melted$page <- factor(melted$page, levels = unique(melted$page[order(melted$variable, melted$value, decreasing = T)]))
-  melted <- melted[!(melted$variable == "sum"),]
+  # melted <- melted[order(-melted$variable, -melted$value, decreasing = F), ]
+  
+  # Make a factor to order the data
+  melted$page <- factor(melted$page, levels = unique(melted$page),ordered = T)
+  
   
   # Define Title
   title <- ""
@@ -172,13 +173,13 @@ fun_bar_chart <- function(data_enr_temp, number_to_display, decreasing = T) {
   }
   
   # Make plot
-  plot <- ggplot(melted, aes(value, page, label=value)) +   
-    geom_bar(aes(fill = variable), position = "stack", stat="identity") +
+  plot <- ggplot(melted, aes(value, page, fill = variable, label=value)) +   
+    geom_col() + 
+    geom_text( size = 3, position = position_stack( vjust = 0.5 ) ) +
     ggtitle(title) +
     ylab("Sum") + xlab("Page") +
     scale_fill_discrete(labels=c('Visits', 'Page impressions')) +
     labs(fill='') +
-    geom_text(size = 3, position = position_stack(vjust = .5))+
     theme(legend.position = "top", plot.title = element_text(hjust = 0.5, size=18), axis.title=element_text(size=14,face="bold"))
   return(plot)
 }

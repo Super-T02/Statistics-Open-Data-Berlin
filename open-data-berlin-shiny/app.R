@@ -153,22 +153,27 @@ generateColumnNames <- function(date) {
 
 # Function for chart
 fun_bar_chart <- function(data_enr_temp, number_to_display, col, month = "", decreasing = T, head_by_v = T) {
+  sum <- apply(data_enr[,col], c(1), function(x) {sum(x, na.rm = T)})
+  data_enr_temp['sum'] <- sum
   # Order by sum of visits
-  if(head_by_v) {
-    data_enr_temp <- data_enr_temp[order(eval(parse(text = paste("data_enr_temp", col[1], sep = "$"))), decreasing = decreasing), ]
-  } else {
-    data_enr_temp <- data_enr_temp[order(eval(parse(text = paste("data_enr_temp", col[2], sep = "$"))), decreasing = decreasing), ]
-  }
+  #if(head_by_v) {
+  #  data_enr_temp <- data_enr_temp[order(eval(parse(text = paste("data_enr_temp", col[1], sep = "$"))), decreasing = decreasing), ]
+  #} else {
+  #  data_enr_temp <- data_enr_temp[order(eval(parse(text = paste("data_enr_temp", col[2], sep = "$"))), decreasing = decreasing), ]
+  #}
+  
+  data_enr_temp <- data_enr_temp[order(data_enr_temp$sum, decreasing = decreasing), ]
   
   # Get the 10 highest/lowest per class
   top10 <- data_enr_temp[which(data_enr_temp$page %in% head(data_enr_temp, number_to_display)$page),]
-  
+  top10 <- top10[order(top10$sum, decreasing = T), ]
   # Make two fields for every variable of each page
   melted <- melt(top10[,c("page", col)], id="page")
-  # melted <- melted[order(melted$variable, -melted$value, decreasing = F), ]
   
-  # Make a factor to order the data by the number of visits
-  melted$page <- factor(melted$page, levels = unique(melted$page[order(melted$variable, melted$value, decreasing = F)]))
+  # melted <- melted[order(-melted$variable, -melted$value, decreasing = F), ]
+  
+  # Make a factor to order the data
+  melted$page <- factor(melted$page, levels = unique(melted$page),ordered = T)
   
   # Define Title
   title <- ""
@@ -179,11 +184,12 @@ fun_bar_chart <- function(data_enr_temp, number_to_display, col, month = "", dec
   }
   
   # Make plot
-  plot <- ggplot(melted, aes(value, page)) +   
-    geom_bar(aes(fill = variable), position = "dodge", stat="identity") +
+  plot <- ggplot(melted, aes(value, page, fill = variable, label=value)) +   
+    geom_col() + 
+    geom_text( size = 3, position = position_stack( vjust = 0.5 ) ) +
     ggtitle(title) +
     ylab("Sum") + xlab("Page") +
-    scale_fill_discrete(labels=c('Visits', 'Page impressions')) +
+    scale_fill_discrete(labels=c('Page impressions', 'Visits')) +
     labs(fill='') +
     theme(
       legend.position = "top",

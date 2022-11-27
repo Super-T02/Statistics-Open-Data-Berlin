@@ -140,8 +140,10 @@ month_cols_v <- names(data_enr)[grep("X[0-9]*[.][0-9][0-9][.]v", names(data_enr)
 # Calculate the sums
 sum_pi <- apply(data_enr[,month_cols_pi], c(1), function(x) {sum(x, na.rm = T)})
 sum_v <- apply(data_enr[,month_cols_v], c(1), function(x) {sum(x, na.rm = T)})
+sum <- sum_pi + sum_v
 data_enr['sum_pi'] <- sum_pi
 data_enr['sum_v'] <- sum_v
+data_enr['sum'] <- sum
 
 # View(data_enr[,c('page','sum_v', 'sum_pi')])
 ####### PREPARE SUMS END ####### 
@@ -195,8 +197,9 @@ fun_bar_chart <- function(data_enr_temp, page) {
   title <- paste("Page impressions and visits of", page, "per month", sep = " ")
   
   # Make plot
-  plot <- ggplot(melted, aes(month, value)) +   
-    geom_bar(aes(fill = variable), position = "dodge", stat="identity") +
+  plot <- ggplot(melted, aes(month, value, fill = variable, label = value)) +   
+    geom_col() + 
+    geom_text( size = 3, position = position_stack( vjust = 0.5 ) ) +
     ggtitle(title) +
     ylab("Amount") + xlab("Month") +
     scale_fill_discrete(labels=c('Page impressions', 'Visits')) +
