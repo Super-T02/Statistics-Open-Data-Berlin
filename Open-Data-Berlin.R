@@ -108,7 +108,6 @@ data_sub$page <- gsub("(√[^A-Za-z]*?§(A4)?)|(A4)|¬® ", "ä", data_sub$page)
 ####### FIND DUPLICATES START #######
 # Find the duplicates
 data_dup <- data_sub[(duplicated(data_sub$page) | duplicated(data_sub$page, fromLast = T)),]
-
 # Sum the amount of visits and replace the 0's with NA
 data_agg <- aggregate(x = data_sub[ , colnames(data_sub) != "page"],             # Mean by group
           by = list(data_sub$page),
@@ -198,6 +197,40 @@ p2
 
 # View(melted)
 ####### TASK B) 10 least used pages END#######
+
+
+
+
+####### TASK D)  impressions ~ visits#######
+# Test if there are in one data set more impressions than visits
+sum(data_enr$sum_pi < data_enr$sum_v) # 0
+
+# Test how many pages have the same amount of impressions and visits
+sum(data_enr$sum_pi == data_enr$sum_v) # 2147
+
+# Look for a relation ship
+p3 <- ggplot(data_enr, aes(sum_v, sum_pi)) +
+  geom_point() +
+  geom_smooth(method = 'loess', formula = "y ~ x") +
+  labs(title = "Relationship between impressions and visits") + 
+  xlab("Sum of visits by page") + ylab("Sum of page impressions by page")
+p3
+
+# Answer: There are always more or equal impressions than visits. That means
+# every visit is a impression, but a visit can have multiple impressions. Looking
+# at the relationship, we can see that more visits result in more impressions.
+####### TASK D) visits ~ impressions#######
+
+
+
+
+####### TASK E)  Started pages#######
+# From TASK D) we know that every page with at least one impression have one visit.
+# So we can filter through the first date
+start_pages <- data_enr[!(is.na(data_enr$X2019.02.v)), "page"]
+start_pages
+# Answer: The in start_pages listed pages are start pages.
+####### TASK E) visits ~ impressions#######
 
 
 
