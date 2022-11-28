@@ -106,10 +106,54 @@ data_sub <- data
 data_sub$page <- gsub("(√[^A-Za-z]*?[ü∏])|%C3%9F", "ß", data_sub$page) # ß
 data_sub$page <- gsub("(√[^A-Za-z]*?º)|%C3%BC", "ü", data_sub$page) # ü
 data_sub$page <- gsub("(√[^A-Za-z]*?∂)|%C3%B6", "ö", data_sub$page) # ö
-data_sub$page <- gsub("(√[^A-Za-z]*?§(A4)?)|(A4)|¬® ", "ä", data_sub$page) # ä
+data_sub$page <- gsub("(√[^A-Za-z]*?§(A4)?)|(%C3%)?(A4)|(¬® a)|(&auml;)|(ÔøΩ)|(aÃà)|( Ãà)", "ä", data_sub$page) # ä
+data_sub$page <- gsub("¬Æ", "®", data_sub$page) # ®
+data_sub$page <- gsub("¬ß", "§", data_sub$page) # §
+data_sub$page <- gsub("eurm¬≤", "EUR/m²", data_sub$page) # €
+
+# No sense -> delete chars
+data_sub$page <- gsub("-?‚Äì-?", "-", data_sub$page)
+data_sub$page <- gsub(")[.]?", "", data_sub$page)
+data_sub$page <- gsub(",|(¬¨)|!|&| Óåì", "", data_sub$page)
+data_sub$page <- gsub("‚Äã|‚Äû|‚Äú", "", data_sub$page)
+
+# invalid <- gsub("[a-z0-9\\._äöüß®§€]|-","",data_sub$page, ignore.case = T)
+# data_sub$page[invalid != ""]
+# invalid[invalid != ""]
+# data_sub$page[invalid %in% "=="]
+
 # View(data_sub)
 # Unsolved Problem: ¬ is sometimes in the data but don't know what it does
 
+# clean malicious data
+# data_sub$page[data_sub$page == ""] <- ""
+data_sub$page[data_sub$page == "koordinaten-der-zugangsmöglichkeiten-zu-stationen-0 Orignalquelle: daten.berlin.de Urheber der Daten auch VBB aber Version Mai 2018 Zuletzt aktualisiert 18. September 2018 10:58"] <- "koordinaten-der-zugangsmöglichkeiten-zu-stationen-0"
+data_sub$page[data_sub$page == "einwohnerinnen-texttt{und-einwohner-den-ortsteilen-berlins-am-30062016"] <- "einwohnerinnen-text-und-einwohner-den-ortsteilen-berlins-am-30062016"
+data_sub$page[data_sub$page == "vbb-fahrplandaten-gtfsxid=17259157000231570018615700190157002561570025915700262usg=ALkJrhgrmAYC4EL0Dhh2k3oF-zprTxEuCA"] <- "vbb-fahrplandaten-gtfs"
+data_sub$page[data_sub$page == "volkswirtschaftliche-gesamtrechnungen-berlin-und-brandenburg abgerufen"] <- "volkswirtschaftliche-gesamtrechnungen-berlin-und-brandenburg"
+data_sub$page[data_sub$page == "vbb-fahrplandaten-gtfs laden Sie die GTFS.zip"] <- "vbb-fahrplandaten-gtfs"
+data_sub$page[data_sub$page == "vbb-fahrplandaten-gtfs (z.B."] <- "vbb-fahrplandaten-gtfs"
+data_sub$page[data_sub$page == "träger-von-kindertagesstätten-marzahn-hellersdorfalice saloman schule"] <- "träger-von-kindertagesstätten-marzahn-hellersdorf-alice-saloman-schule"
+data_sub$page[data_sub$page == "straßenverzeichnisberliner strasen"] <- "straßenverzeichnis-berliner-straßen"
+data_sub$page[data_sub$page == "statistische-einheiten-im-inspire-datenmodell-rbs- blöcke-atom-1"] <- "statistische-einheiten-im-inspire-datenmodell-rbs-blöcke-atom-1"
+data_sub$page[data_sub$page == "liste-der-häufigen-vornamen-2017rashad idris berlin"] <- "liste-der-häufigen-vornamen-2017"
+data_sub$page[data_sub$page == "liste-der-badestellenbrutto netto rechner"] <- "liste-der-badestellen-brutto-netto-rechner"
+data_sub$page[data_sub$page == "koordinaten-der-zugangsmöglichkeiten-zu-stationen-0 von Berlin Open Data (daten.berlin.de Urheber der Daten VBB (API CSV-Datei (Originalbezeichnung: UMBW.csvOriginal Datensatz beinhaltet 20046 Dateneinträge Koordinaten der"] <- "koordinaten-der-zugangsmöglichkeiten-zu-stationen-0"
+data_sub$page[data_sub$page == "koordinaten-der- zugangsmöglichkeiten-zu-stationen-0"] <- "koordinaten-der-zugangsmöglichkeiten-zu-stationen-0"
+data_sub$page[data_sub$page == "kitas-berlin-steglitz zehlendorf"] <- "kitas-berlin-steglitz-zehlendorf"
+data_sub$page[data_sub$page == "grünanlagenbestand-berlin-einschließlich-der-öffentlichen-spielplätze- wms-2"] <- "grünanlagenbestand-berlin-einschließlich-der-öffentlichen-spielplätze-wms-2"
+data_sub$page[data_sub$page == "grünanlagenbestand-berlin-einschl-der-öffentlichen-spielplätze-spielplätze-wfs-4usg=ALkJrhhpBeHpvpm-qzrnGTkp0z1qTwQldQ"] <- "grünanlagenbestand-berlin-einschl-der-öffentlichen-spielplätze-spielplätze-wfs-4"
+data_sub$page[data_sub$page == "geometrien-der-wahlbezirke-für-die-wahl-zum- abgeordnetenhaus-von-berlin-2021"] <- "geometrien-der-wahlbezirke-für-die-wahl-zum-abgeordnetenhaus-von-berlin-2021"
+data_sub$page[data_sub$page == "gebiete§ 9 AG BauGB-von-außergewöhnlicher-stadtpolitischer-bedeutung-nach-§-9-ag-baugb-wms"] <- "gebiete-von-außergewöhnlicher-stadtpolitischer-bedeutung-nach-§-9-ag-baugb-wms"
+data_sub$page[data_sub$page == "erhaltungsverordnungsgebiete-erhaltung-der-zusammensetzung -der-wohnbevölkerung-wfs"] <- "erhaltungsverordnungsgebiete-erhaltung-der-zusammensetzung-der-wohnbevölkerung-wfs"
+data_sub$page[data_sub$page == "einwohnerinnen-und-einwohner-berlin-lor-planungsräumen-am-31122018 bereit"] <- "einwohnerinnen-und-einwohner-berlin-lor-planungsräumen-am-31122018"
+data_sub$page[data_sub$page == "einwohnerinnen-und-einwoh- ner-mit-migrationshintergrund-berlin-lor-planungsräumen-nach-6."] <- "einwohnerinnen-und-einwohner-mit-migrationshintergrund-berlin-lor-planungsräumen"
+data_sub$page[data_sub$page == "einschulbereiche-geometrien-schuljahr-20192020 ."] <- "einschulbereiche-geometrien-schuljahr-20192020"
+data_sub$page[data_sub$page == "digitale-farbige-orthophotos-2018-dop20rgbWeb Map Service Digitale Orthophotos - Bodenauflösung 20 cm on sg.geodatenzentrum.de"] <- "digitale-farbige-orthophotos-2018-dop20rgb"
+data_sub$page[data_sub$page == "brandenburger-straßen-und-vo lksfeste-2020"] <- "brandenburger-straßen-und-volksfeste-2020"
+data_sub$page[data_sub$page == "bodenrichtwert 12305 Berlin"] <- "bodenrichtwert-12305-berlin"
+data_sub$page[data_sub$page == "bücherschränke-im bezirk-lichtenberg"] <- "bücherschränke-im-bezirk-lichtenberg"
+data_sub$page[data_sub$page == "¬üenhandel"] <- "aus-und-einfuhr-außenhandel"
 ####### REMOVE ESCAPED LETTERS END ####### 
 
 
@@ -118,7 +162,6 @@ data_sub$page <- gsub("(√[^A-Za-z]*?§(A4)?)|(A4)|¬® ", "ä", data_sub$page)
 ####### FIND DUPLICATES START #######
 # Find the duplicates
 data_dup <- data_sub[(duplicated(data_sub$page) | duplicated(data_sub$page, fromLast = T)),]
-
 # Sum the amount of visits and replace the 0's with NA
 data_agg <- aggregate(x = data_sub[ , colnames(data_sub) != "page"],             # Mean by group
                       by = list(data_sub$page),
@@ -127,7 +170,7 @@ data_agg <- aggregate(x = data_sub[ , colnames(data_sub) != "page"],            
 )
 colnames(data_agg)[colnames(data_agg) == 'Group.1'] <- 'page'
 data_agg[data_agg == 0] <- NA
-####### FIND DUPLICATES END #######
+####### FIND DUPLICATES END ####### 
 
 
 ####### PREPARE SUMS START####### 
@@ -187,12 +230,13 @@ fun_bar_chart <- function(data_enr_temp, page) {
   )
   page_data['Page impressions'] <- generateData(page_data$month, data_enr_temp, "pi")
   page_data['Visits'] <- generateData(page_data$month, data_enr_temp, "v")
+  page_data['Page impressions - visits'] <- page_data['Page impressions'] - page_data['Visits']
   
   # Remove rows with na
   page_data <- na.omit(page_data)
   
   # Melt the data
-  melted <- melt(page_data[,c("month", c("Page impressions", "Visits"))], id="month")
+  melted <- melt(page_data[,c("month", c("Page impressions - visits", "Visits"))], id="month")
   
   title <- paste("Page impressions and visits of", page, "per month", sep = " ")
   
@@ -202,7 +246,7 @@ fun_bar_chart <- function(data_enr_temp, page) {
     geom_text( size = 3, position = position_stack( vjust = 0.5 ) ) +
     ggtitle(title) +
     ylab("Amount") + xlab("Month") +
-    scale_fill_discrete(labels=c('Page impressions', 'Visits')) +
+    scale_fill_discrete(labels=c('Page impressions - visits', 'Visits')) +
     labs(fill='') +
     theme(
       legend.position = "top",

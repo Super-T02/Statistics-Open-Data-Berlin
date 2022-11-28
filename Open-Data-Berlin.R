@@ -191,21 +191,21 @@ data_enr['sum'] <- sum
 
 ####### TASK A) 10 most used pages ALTRNATIVE START#######
 # Function for chart
-fun_bar_chart <- function(data_enr_temp, number_to_display, decreasing = T) {
+fun_bar_chart <- function(data_enr_temp, number_to_display, decreasing = T, orderBy = "sum_pi") {
   # Order by sum of visits and page impressions
-  data_enr_temp <- data_enr_temp[order(data_enr_temp$sum, decreasing = decreasing), ]
+  data_enr_temp['sum_pi_v'] <- data_enr_temp$sum_pi - data_enr_temp$sum_v
+  data_enr_temp <- data_enr_temp[order(data_enr_temp[orderBy], decreasing = decreasing), ]
   
   # Get the 10 highest/lowest per class
   top10 <- data_enr_temp[which(data_enr_temp$page %in% head(data_enr_temp, number_to_display)$page),]
-  top10 <- top10[order(top10$sum, decreasing = T), ]
+  top10 <- top10[order(top10[orderBy], decreasing = T), ]
   # Make two fields for every variable of each page
-  melted <- melt(top10[,c("page", "sum_v", "sum_pi")], id="page")
+  melted <- melt(top10[,c("page", "sum_pi_v", "sum_v")], id="page")
   
   # melted <- melted[order(-melted$variable, -melted$value, decreasing = F), ]
   
   # Make a factor to order the data
   melted$page <- factor(melted$page, levels = unique(melted$page),ordered = T)
-  
   
   # Define Title
   title <- ""
@@ -218,16 +218,22 @@ fun_bar_chart <- function(data_enr_temp, number_to_display, decreasing = T) {
   # Make plot
   plot <- ggplot(melted, aes(value, page, fill = variable, label=value)) +   
     geom_col() + 
-    geom_text( size = 3, position = position_stack( vjust = 0.5 ) ) +
+    geom_text( size = 4.5, position = position_stack( vjust = 0.5 ) ) +
     ggtitle(title) +
     ylab("Sum") + xlab("Page") +
-    scale_fill_discrete(labels=c('Visits', 'Page impressions')) +
+    scale_fill_discrete(labels=c('Page Impressions - Visits', 'Visits')) +
     labs(fill='') +
-    theme(legend.position = "top", plot.title = element_text(hjust = 0.5, size=18), axis.title=element_text(size=14,face="bold"))
+    theme(
+      legend.position = "top",
+      text = element_text(size = 14), 
+      plot.title = element_text(hjust = 0.5, size=18),
+      axis.title=element_text(size=14,face="bold"),
+      axis.text = element_text(size = 14)
+    )
   return(plot)
 }
 
-p1 <- fun_bar_chart(data_enr, 10, T)
+p1 <- fun_bar_chart(data_enr, 10, T, "sum_pi")
 p1
 ####### TASK A) 10 most used pages END#######
 
@@ -236,7 +242,7 @@ p1
 
 ####### TASK B) 10 least used pages START#######
 # Use the function of a)
-p2 <- fun_bar_chart(data_enr, 10, F)
+p2 <- fun_bar_chart(data_enr, 10, F, "sum_pi")
 p2
 
 # View(melted)
@@ -253,7 +259,7 @@ sum(data_enr$sum_pi < data_enr$sum_v) # 0
 sum(data_enr$sum_pi == data_enr$sum_v) # 2147
 
 # Look for a relation ship
-p3 <- ggplot(data_enr, aes(sum_v, sum_pi)) +
+p3 <- ggplot(data_enr[,], aes(sum_v, sum_pi)) +
   geom_point() +
   geom_smooth(method = 'loess', formula = "y ~ x") +
   labs(title = "Relationship between impressions and visits") + 
