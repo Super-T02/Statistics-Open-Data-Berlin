@@ -230,7 +230,7 @@ fun_bar_chart <- function(data_enr_temp, number_to_display, col, month = "", dec
     geom_text( size = 4, position = position_stack( vjust = 0.5 ) ) +
     ggtitle(title) +
     ylab("Sum") + xlab("Page") +
-    scale_fill_discrete(labels=c('Page impressions - Visits', 'Visits')) +
+    scale_fill_discrete(labels=c('Difference (Impression - Visits)', 'Visits')) +
     labs(fill='') +
     theme(
       legend.position = "top",
@@ -277,15 +277,7 @@ ui <- fluidPage(
     
     # Show a plot of the generated distribution
     mainPanel(
-      plotOutput("most"),
-      #tags$br(),
-      #tags$br(),
-      #tags$br(),
-      #tags$br(),
-      #tags$br(),
-      #tags$br(),
-      #tags$br(),
-      # plotOutput("least")
+      plotOutput("most"), #alt: least
     )
   )
 )
@@ -312,9 +304,9 @@ server <- function(input, output) {
   }, height = function(){num_of_elements$size})
   
   
-  #output$least <- renderPlot({
-  #  fun_bar_chart(data_agg, 10, sliderMonth$Col, sliderMonth$Name, F, T)
-  #}, height = 500)
+  output$least <- renderPlot({
+    fun_bar_chart(data_agg, num_of_elements$num, sliderMonth$Col, sliderMonth$Name, F)
+  }, height = function(){num_of_elements$size})
 }
 
 # Run the application 

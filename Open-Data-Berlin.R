@@ -15,7 +15,7 @@ str(data)
 # 2. Every Month has two columns: pi (Page impressions), v (Page Visits)
 # 3. Many NA's
 
-####### REMOVE ESCAPED LETTERS START ####### 
+####### REMOVE ESCAPED LETTERS AND CORRUPT DATA START ####### 
 # Next: Start with 1. step and remove escaped letters
 # - √º = ü
 # - √∂ = ö
@@ -107,15 +107,16 @@ data_sub$page <- gsub(")[.]?", "", data_sub$page)
 data_sub$page <- gsub(",|(¬¨)|!|&| Óåì", "", data_sub$page)
 data_sub$page <- gsub("‚Äã|‚Äû|‚Äú", "", data_sub$page)
 
-# invalid <- gsub("[a-z0-9\\._äöüß®§€]|-","",data_sub$page, ignore.case = T)
+# Used for finding strange signs
+# invalid <- gsub("[a-z\\._äöüß®§€]|-","",data_sub$page, ignore.case = T)
 # data_sub$page[invalid != ""]
 # invalid[invalid != ""]
-# data_sub$page[invalid %in% "=="]
+# data_sub$page[invalid %in% ""]
 
 # View(data_sub)
 # Unsolved Problem: ¬ is sometimes in the data but don't know what it does
 
-# clean malicious data
+# correct malicious data
 # data_sub$page[data_sub$page == ""] <- ""
 data_sub$page[data_sub$page == "koordinaten-der-zugangsmöglichkeiten-zu-stationen-0 Orignalquelle: daten.berlin.de Urheber der Daten auch VBB aber Version Mai 2018 Zuletzt aktualisiert 18. September 2018 10:58"] <- "koordinaten-der-zugangsmöglichkeiten-zu-stationen-0"
 data_sub$page[data_sub$page == "einwohnerinnen-texttt{und-einwohner-den-ortsteilen-berlins-am-30062016"] <- "einwohnerinnen-text-und-einwohner-den-ortsteilen-berlins-am-30062016"
@@ -144,7 +145,26 @@ data_sub$page[data_sub$page == "brandenburger-straßen-und-vo lksfeste-2020"] <-
 data_sub$page[data_sub$page == "bodenrichtwert 12305 Berlin"] <- "bodenrichtwert-12305-berlin"
 data_sub$page[data_sub$page == "bücherschränke-im bezirk-lichtenberg"] <- "bücherschränke-im-bezirk-lichtenberg"
 data_sub$page[data_sub$page == "¬üenhandel"] <- "aus-und-einfuhr-außenhandel"
-####### REMOVE ESCAPED LETTERS END ####### 
+data_sub$page <- gsub("-ua-", "-umweltatlas-", data_sub$page)
+
+# Equalize Services
+data_sub$page <- gsub("-wms(-[0-9]*)?", "", data_sub$page)
+data_sub$page <- gsub("-atom(-[0-9]*)?", "", data_sub$page)
+data_sub$page <- gsub("-wfs(-[0-9]*)?", "", data_sub$page)
+data_sub$page <- gsub("-gtfs(-[0-9]*)?", "", data_sub$page)
+data_sub$page <- gsub("[.]rdf", "", data_sub$page)
+data_sub$page <- gsub("[.]xml", "", data_sub$page)
+data_sub$page <- gsub("\b[0-9a-f\\-]*$", "", data_sub$page)
+data_sub$page <- gsub("-v-2$", "-v2", data_sub$page)
+data_sub$page <- gsub("-[0-9]{1,2}$", "", data_sub$page)
+data_sub$page <- gsub("[a-f]+[0-9]+[0-9a-f]*$", "", data_sub$page)
+data_sub$page <- gsub("-0$", "", data_sub$page)
+# data_sub[grepl("-v2", data_sub$page), 'page']
+
+# Remove corrupt data
+data_sub <- data_sub[-which(data_sub$page == 'a'), ]
+data_sub <- data_sub[-which(data_sub$page == '1c35e89f-5725-4d46-bc5a-229'), ]
+####### REMOVE ESCAPED LETTERS AND CORRUPT DATA END ####### 
 
 
 
@@ -200,19 +220,19 @@ fun_bar_chart <- function(data_enr_temp, number_to_display, decreasing = T, orde
   top10 <- data_enr_temp[which(data_enr_temp$page %in% head(data_enr_temp, number_to_display)$page),]
   top10 <- top10[order(top10[orderBy], decreasing = T), ]
   # Make two fields for every variable of each page
-  melted <- melt(top10[,c("page", "sum_pi_v", "sum_v")], id="page")
+  melted <- melt(top10[,c("page","sum_v",  "sum_pi_v")], id="page")
   
   # melted <- melted[order(-melted$variable, -melted$value, decreasing = F), ]
   
   # Make a factor to order the data
   melted$page <- factor(melted$page, levels = unique(melted$page),ordered = T)
-  
+  # View(melted)
   # Define Title
   title <- ""
   if(decreasing) {
-    title <- paste("Sum of page impressions and visits of the", number_to_display ,"most visited pages", sep = " ")
+    title <- paste("Most", number_to_display ,"used pages by the difference of page impressions and vists", sep = " ")
   } else {
-    title <- paste("Sum of page impressions and visits of the", number_to_display ,"least visited pages", sep = " ")
+    title <- paste("Least", number_to_display ,"used pages by visits and page name", sep = " ")
   }
   
   # Make plot
@@ -221,7 +241,7 @@ fun_bar_chart <- function(data_enr_temp, number_to_display, decreasing = T, orde
     geom_text( size = 4.5, position = position_stack( vjust = 0.5 ) ) +
     ggtitle(title) +
     ylab("Sum") + xlab("Page") +
-    scale_fill_discrete(labels=c('Page Impressions - Visits', 'Visits')) +
+    scale_fill_discrete(labels=c('Visits', 'Difference (Impression - Visits)')) +
     labs(fill='') +
     theme(
       legend.position = "top",
@@ -233,7 +253,7 @@ fun_bar_chart <- function(data_enr_temp, number_to_display, decreasing = T, orde
   return(plot)
 }
 
-p1 <- fun_bar_chart(data_enr, 10, T, "sum_pi")
+p1 <- fun_bar_chart(data_enr, 10, T, "sum_pi_v")
 p1
 ####### TASK A) 10 most used pages END#######
 
@@ -286,16 +306,56 @@ start_pages
 ###### SOLUTIONS #####
 # Solution of a)
 p1
-# Answer: The most used pages have all more impressions than views. The most
-# used page was "covid-19-berlin-verteilung-den-bezirken-gesamtübersicht". Additionally,
-# there were three more covid-19 pages in the top 10. I think this is because the 
-# pandemic situation had much publicity in the last years. Other data sets which are used more often,
-# were the "liste-der-häufigen-vornamen". The lists of the years 2018 to 2020 are in the top 10.
-# What are page visits and page impression? A page visit is counted, if a person loads the page.
+# Answer: Die Grafik zeigt die 10 meist genutzten Seiten/Dienste von
+# Open Data Berlin. Dabei sind die Page Visits und die Differenz der
+# Page Visits zu den Page Impressions dargestellt.
+# 
+# Weil zum berechnen der Page Visits und der Page Impressions Webtrekk
+# benutzt wird, ist unter Page Visits das Aufrufen einer Unterseite
+# von Open Berlin gemeint. Wird die Seite innerhalb von 30 Minuten
+# wieder aufgerufen, wird der Aufruf nicht als Visit gezählt. Der
+# Nutzer kann also erst nach 30 Minuten einen zweiten Visit auf der
+# gleichen Seite erzeugen.
+#
+# Eine Page Impression ist hingegen eine Interaktion bzw. Aktion auf
+# der Seite. Dazu zählt das Laden der Webseite,Schreiben von
+# Kommentaren und das klicken von Links bzw. Herunterladen von
+# Datensätzen. Folglich löst jedes Laden der Seite aufjedenfall eine
+# Impression aus und einmal pro 30 Minuten einen Visit. In anderen
+# Worten jeder Visit ist auch eine Page Impression. Damit nun die 10
+# meist benutzten Dienste ermittelt werden können, wird die Differenz
+# aus Visit und Impressions gebildet. Weil jeder Visit auch eine
+# Impression auslöst, ist die Differenz die Anzahl von anderen
+# Interaktionen. Je größer diese Differenz ist, desto größer ist die
+# Interaktion mit der Webseite. Je größer die Interaktion ist, desto
+# mehr Personen haben sich den Datensatz heruntergeladen.
+#
+# Außerdem wurden für die Grafik Skriptfehler, die doppelte Datensätze
+# oder zusätzliche Unterseiten erzeugt haben gefiltert. Nach einer
+# Recherche über Open Data Berlin wurde festgestellt das es
+# verschiedene Webseiten für unterschiedliche Standards wie Web Map
+# Service (WMS), Web Feature Service (WFS) und ATOM-Feed (ATOM) gibt,
+# die die selben Daten nur in einem anderen Format enthalten. Zum
+# Beispiel für Zierbrunnen gibt es die Daten in WMS oder WFS. Weil der
+# Dienst und die Daten selbst jedoch gleich sind wurde hier WMS, WFS,
+# ATOM und keine Beschreibung zusammengeführt und als ein Dienst
+# betrachtet. Außerdem wurden Seitennamen die eine fortlaufenden
+# Nummern (wie adressen-berlin, adressen-berlin-0, adressen-berlin-1,
+# ...) haben zusammengeführt und als ein Dienst betrachtet, weil nach
+# einer Recherche keine Seiten mit einer fortlaufenden Nummer bei Open
+# Data Berlin gefunden wurden. Es ist also davon auszugehen, dass der
+# gleiche Dienst gemeint ist. Enthalten Seitennamen aber Jahreszahlen
+# oder ein Datum, so wurden sie absichtlich nicht zusammengeführt,
+# weil es bei Open Data Berlin unterschiedliche Datensätze für
+# unterschiedliche Jahre gibt.
+#
+# Referenzen Webtrekk, page visits und impression:
+# https://documentation.mapp.com/1.0/en/basic-metrics-page-impressions-visits-visitors-7211156.html 
+# https://engel-zimmermann.de/blog/visits-views-und-page-impressions-eine-kleine-fuehrung-durch-den-zahlendschungel/
 
 # Solution of b)
 p2
-# Answer: It's difficult to provide information of the 10 least used ...
+# Answer: 
 
 # Solution of c)
 # Please start the shiny app
