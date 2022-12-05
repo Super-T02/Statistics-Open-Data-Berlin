@@ -55,14 +55,15 @@ fun_bar_chart <- function(data_enr_temp, page) {
   # Melt the data
   melted <- melt(page_data[,c("month", c("Page impressions - visits", "Visits"))], id="month")
   
-  title <- paste("Page impressions and visits of", page, "per month", sep = " ")
+  title <- paste("Page impressions und visits von", page, "pro Monat", sep = " ")
   # Make plot
   plot <- ggplot(melted, aes(month, value, fill = variable, label = value)) +   
     geom_col() + 
-    geom_text( size = 3, position = position_stack( vjust = 0.5 ) ) +
+    geom_text( size = 3, position = position_stack( vjust = 0.5 ), color = "white") +
     ggtitle(title) +
-    ylab("Amount") + xlab("Month") +
-    scale_fill_discrete(labels=c('Page impressions - visits', 'Visits')) +
+    ylab("Anzahl") + xlab("Monat") +
+    scale_fill_manual(values=c("#824f8c", "#e64823"), labels=c('Page impressions - visits', 'Visits'))+
+    theme_linedraw()+
     labs(fill='') +
     theme(
       legend.position = "top",
@@ -95,12 +96,12 @@ data_enr_sorted <- data_enr[order(data_enr['sum_pi'], decreasing = T), ]
 ui <- fluidPage(
   
   # Application title
-  titlePanel("Mothly visits and page impressions of the 10 most used open data pages in Berlin"),
+  titlePanel("Monatlichen Page Visits und Impressions pro Seite von Open Data Berlin"),
   
   # Sidebar with a slider input for number of bins 
   sidebarLayout(
     sidebarPanel(
-      selectInput("select", "Page", choices = data_enr_sorted$page)
+      selectInput("select", "Seite", choices = data_enr_sorted$page)
     ),
     
     # Show a plot of the generated distribution

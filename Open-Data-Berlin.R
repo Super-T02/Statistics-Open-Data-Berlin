@@ -243,19 +243,20 @@ fun_bar_chart <- function(data_enr_temp, number_to_display, decreasing = T, orde
   # Define Title
   title <- ""
   if(decreasing) {
-    title <- paste("Most", number_to_display ,"used pages by page impressions", sep = " ")
+    title <- paste("Die", number_to_display ,"meist genutzten Seiten nach Page Imrpessions", sep = " ")
   } else {
-    title <- paste("Least", number_to_display ,"used pages by page impressions", sep = " ")
+    title <- paste("Die", number_to_display ,"am wenigsten genutzten Seiten nach Page Imrpessions", sep = " ")
   }
   
   # Make plot
   plot <- ggplot(melted, aes(value, page, label=value)) +   
     geom_bar(aes(fill = variable), position = "dodge", stat="identity") +
-    geom_text( size = 4, hjust=1.1, position=position_dodge2(0.9)) +
+    geom_text( size = 4, hjust=1.1, position=position_dodge2(0.9), color="white") +
     ggtitle(title) +
-    ylab("Sum") + xlab("Page") +
-    scale_fill_discrete(labels=c('Impressions', 'Visits')) +
+    ylab("Seite") + xlab("Summe") +
     labs(fill='') +
+    scale_fill_manual(values=c("#824f8c", "#e64823"), labels=c('Impressions', 'Visits'))+
+    theme_linedraw()+
     theme(
       legend.position = "top",
       text = element_text(size = 14), 
@@ -329,7 +330,10 @@ task_E <- function(data_enr){
 
 
 ###### SOLUTIONS #####
-# a) Die 10 meist benutzen Datensätze: (Plot: p1) Die Grafik zeigt die
+data_enr <- loadData() %>% substituteData() %>% aggregateData() %>% enrichData()
+# a) Die 10 meist benutzen Datensätze: 
+task_A(data_enr)
+# (Plot: p1) Die Grafik zeigt die
 # 10 meist genutzten Seiten/Dienste von Open Data Berlin. Dabei sind
 # die Page Visits und die Anzahl der Page Impressions dargestellt.
 # 
@@ -378,6 +382,7 @@ task_E <- function(data_enr){
 # at the relationship, we can see that more visits result in more impressions.
 
 # Solution of e)
+task_E(data_enr)
 # TODO: Write Answer
 # start_pages
 

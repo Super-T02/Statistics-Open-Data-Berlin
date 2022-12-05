@@ -48,18 +48,19 @@ fun_bar_chart <- function(data_enr_temp, number_to_display, col, month = "", dec
   # Define Title
   title <- ""
   if(decreasing) {
-    title <- paste("Most", number_to_display ,"used pages by page impressions in", month, sep = " ")
+    title <- paste("Die", number_to_display ,"meist genutzten Seiten nach Page Imrpessions in", month, sep = " ")
   } else {
-    title <- paste("Least", number_to_display ,"used pages by page impressions in", month, sep = " ")
+    title <- paste("Die", number_to_display ,"am wenigsten genutzten Seiten nach Page Imrpessions in", month, sep = " ")
   }
   
   # Make plot
   plot <- ggplot(melted, aes(value, page, label=value)) +
     geom_bar(aes(fill = variable), position = "dodge", stat="identity") +
-    geom_text( size = 4, hjust=1.1, position=position_dodge2(0.9)) +
+    geom_text( size = 4, hjust=1.3, position=position_dodge2(0.9), color = "white") +
     ggtitle(title) +
-    ylab("Sum") + xlab("Page") +
-    scale_fill_discrete(labels=c('Impressions', 'Visits')) +
+    ylab("Seite") + xlab("Summe") +
+    scale_fill_manual(values=c("#824f8c", "#e64823"), labels=c('Impressions', 'Visits'))+
+    theme_linedraw()+
     labs(fill='') +
     theme(
       legend.position = "top",
@@ -84,20 +85,20 @@ data_enr <- enrichData(data_agg)
 ui <- fluidPage(
   
   # Application title
-  titlePanel("Mothly visits and page impressions of open data pages in Berlin"),
+  titlePanel("Visits und Impressions der pro Monat meist benutzten Seiten"),
   
   # Sidebar with a slider input for number of bins 
   sidebarLayout(
     sidebarPanel(
       sliderInput("slider",
-                  "Time",
+                  "Monat",
                   min = as.Date("2019-02-01"),
                   max =as.Date("2022-10-01"),
                   value=as.Date("2022-10-01"),
                   timeFormat="%b %Y"
                   ),
       sliderInput("num_of_elements",
-                  "Number of elements",
+                  "Anzahl an dargestellten Seiten",
                   min = 5,
                   max = 100,
                   value= 10,
