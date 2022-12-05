@@ -180,14 +180,14 @@ data_agg <- aggregate(x = data_sub[ , colnames(data_sub) != "page"],            
           )
 colnames(data_agg)[colnames(data_agg) == 'Group.1'] <- 'page'
 data_agg[data_agg == 0] <- NA
-####### FIND DUPLICATES END ####### 
+####### FIND DUPLICATES END #######
 
 
 
 
 
 
-####### PREPARE SUMS START####### 
+####### PREPARE SUMS START#######
 data_enr <- data_agg
 
 # Add the sum of visits | sum of impressions
@@ -220,7 +220,7 @@ fun_bar_chart <- function(data_enr_temp, number_to_display, decreasing = T, orde
   top10 <- data_enr_temp[which(data_enr_temp$page %in% head(data_enr_temp, number_to_display)$page),]
   top10 <- top10[order(top10[orderBy], decreasing = T), ]
   # Make two fields for every variable of each page
-  melted <- melt(top10[,c("page","sum_v",  "sum_pi_v")], id="page")
+  melted <- melt(top10[,c("page", "sum_pi", "sum_v")], id="page")
   
   # melted <- melted[order(-melted$variable, -melted$value, decreasing = F), ]
   
@@ -230,18 +230,18 @@ fun_bar_chart <- function(data_enr_temp, number_to_display, decreasing = T, orde
   # Define Title
   title <- ""
   if(decreasing) {
-    title <- paste("Most", number_to_display ,"used pages by the difference of page impressions and vists", sep = " ")
+    title <- paste("Most", number_to_display ,"used pages by page impressions", sep = " ")
   } else {
-    title <- paste("Least", number_to_display ,"used pages by visits and page name", sep = " ")
+    title <- paste("Least", number_to_display ,"used pages by page impressions", sep = " ")
   }
   
   # Make plot
-  plot <- ggplot(melted, aes(value, page, fill = variable, label=value)) +   
-    geom_col() + 
-    geom_text( size = 4.5, position = position_stack( vjust = 0.5 ) ) +
+  plot <- ggplot(melted, aes(value, page, label=value)) +   
+    geom_bar(aes(fill = variable), position = "dodge", stat="identity") +
+    geom_text( size = 4, hjust=1.1, position=position_dodge2(0.9)) +
     ggtitle(title) +
     ylab("Sum") + xlab("Page") +
-    scale_fill_discrete(labels=c('Visits', 'Difference (Impression - Visits)')) +
+    scale_fill_discrete(labels=c('Impressions', 'Visits')) +
     labs(fill='') +
     theme(
       legend.position = "top",
@@ -253,7 +253,7 @@ fun_bar_chart <- function(data_enr_temp, number_to_display, decreasing = T, orde
   return(plot)
 }
 
-p1 <- fun_bar_chart(data_enr, 10, T, "sum_pi_v")
+p1 <- fun_bar_chart(data_enr, 10, T, "sum_pi")
 p1
 ####### TASK A) 10 most used pages END#######
 
@@ -263,6 +263,10 @@ p1
 ####### TASK B) 10 least used pages START#######
 # Use the function of a)
 p2 <- fun_bar_chart(data_enr, 10, F, "sum_pi")
+
+# TODO: Write some queries for searching for pages with zero visits
+# TODO: Write some queries for searching how many pages have one visit
+
 p2
 
 # View(melted)
@@ -306,6 +310,7 @@ start_pages
 ###### SOLUTIONS #####
 # Solution of a)
 p1
+# TODO: Write new Answer
 # Answer: Die Grafik zeigt die 10 meist genutzten Seiten/Dienste von
 # Open Data Berlin. Dabei sind die Page Visits und die Differenz der
 # Page Visits zu den Page Impressions dargestellt.
@@ -355,20 +360,21 @@ p1
 
 # Solution of b)
 p2
+# TODO: Write Answer
 # Answer: 
 
 # Solution of c)
 # Please start the shiny app
 
 # Solution of d)
+# TODO: New plot for the other shiny app and write Answer
 p3 # and Answer: There are always more or equal impressions than visits. That means
 # every visit is a impression, but a visit can have multiple impressions. Looking
 # at the relationship, we can see that more visits result in more impressions.
 
 # Solution of e)
+# TODO: Write Answer
 start_pages
 
 
-
-
-
+###### SOLUTIONS END #####
