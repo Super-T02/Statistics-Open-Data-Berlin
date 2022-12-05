@@ -329,55 +329,39 @@ task_E <- function(data_enr){
 
 
 ###### SOLUTIONS #####
-# Solution of a)
-# p1
-# TODO: Write new Answer
-# Answer: Die Grafik zeigt die 10 meist genutzten Seiten/Dienste von
-# Open Data Berlin. Dabei sind die Page Visits und die Differenz der
-# Page Visits zu den Page Impressions dargestellt.
+# a) Die 10 meist benutzen Datensätze: (Plot: p1) Die Grafik zeigt die
+# 10 meist genutzten Seiten/Dienste von Open Data Berlin. Dabei sind
+# die Page Visits und die Anzahl der Page Impressions dargestellt.
 # 
-# Weil zum berechnen der Page Visits und der Page Impressions Webtrekk
-# benutzt wird, ist unter Page Visits das Aufrufen einer Unterseite
-# von Open Berlin gemeint. Wird die Seite innerhalb von 30 Minuten
-# wieder aufgerufen, wird der Aufruf nicht als Visit gezählt. Der
-# Nutzer kann also erst nach 30 Minuten einen zweiten Visit auf der
-# gleichen Seite erzeugen.
+# Unter einer Page Impression versteht man die Aufrufe einer Seite.
+# Jedes nicht automatische neuladen der Seite wird dabei getrackt.
+# Dazu zählt das erste mal öffnen, erneute laden, oder öffnen nach
+# einem lägneren Zeitraum [1-3]. Die Page Visits geben zwar auch
+# Seitenaufrufe an aber nur der erste in einer Session. Wobei eine
+# Session nach einer Inaktivität von 30 Minuten aufhört [1-3]. Somit
+# ist ein Visit der erste Besuch einer Seite. Wenn der Nutzer
+# innerhalb von der Session (endet nach 30 Minuten inaktivität) die
+# Seite erneut öffnet bzw. lädt werden keine visits erzeugt sondern
+# nur Impressions. Schließlich lässt sich sagen, dass ein Page Visit
+# auch immer eine Page Impression auslöst [1-3]. 
 #
-# Eine Page Impression ist hingegen eine Interaktion bzw. Aktion auf
-# der Seite. Dazu zählt das Laden der Webseite,Schreiben von
-# Kommentaren und das klicken von Links bzw. Herunterladen von
-# Datensätzen. Folglich löst jedes Laden der Seite aufjedenfall eine
-# Impression aus und einmal pro 30 Minuten einen Visit. In anderen
-# Worten jeder Visit ist auch eine Page Impression. Damit nun die 10
-# meist benutzten Dienste ermittelt werden können, wird die Differenz
-# aus Visit und Impressions gebildet. Weil jeder Visit auch eine
-# Impression auslöst, ist die Differenz die Anzahl von anderen
-# Interaktionen. Je größer diese Differenz ist, desto größer ist die
-# Interaktion mit der Webseite. Je größer die Interaktion ist, desto
-# mehr Personen haben sich den Datensatz heruntergeladen.
+# Aufgrund dieser Definition von Page Imrpessions und Visits wurden in
+# Plot 1 (p1) die Seiten nach ihrer Summe von page impressions
+# geordnet. Weil Seiten mit mehr page impressions wurden häufiger
+# geöffnet und somit potentiell mehr benutzt.
 #
-# Außerdem wurden für die Grafik Skriptfehler, die doppelte Datensätze
-# oder zusätzliche Unterseiten erzeugt haben gefiltert. Nach einer
-# Recherche über Open Data Berlin wurde festgestellt das es
-# verschiedene Webseiten für unterschiedliche Standards wie Web Map
-# Service (WMS), Web Feature Service (WFS) und ATOM-Feed (ATOM) gibt,
-# die die selben Daten nur in einem anderen Format enthalten. Zum
-# Beispiel für Zierbrunnen gibt es die Daten in WMS oder WFS. Weil der
-# Dienst und die Daten selbst jedoch gleich sind wurde hier WMS, WFS,
-# ATOM und keine Beschreibung zusammengeführt und als ein Dienst
-# betrachtet. Außerdem wurden Seitennamen die eine fortlaufenden
-# Nummern (wie adressen-berlin, adressen-berlin-0, adressen-berlin-1,
-# ...) haben zusammengeführt und als ein Dienst betrachtet, weil nach
-# einer Recherche keine Seiten mit einer fortlaufenden Nummer bei Open
-# Data Berlin gefunden wurden. Es ist also davon auszugehen, dass der
-# gleiche Dienst gemeint ist. Enthalten Seitennamen aber Jahreszahlen
-# oder ein Datum, so wurden sie absichtlich nicht zusammengeführt,
-# weil es bei Open Data Berlin unterschiedliche Datensätze für
-# unterschiedliche Jahre gibt.
+# Außerdem wurden für die Grafik kaputte Datensätze entfernt und
+# escapete Buchstaben ersetzt. Abgesehen davon wurden Seitennamen die
+# mit einer Forlaufenden Nummer Enden als eine Seite Betrachtet, da
+# nach einer Recherche keine fortlaufenden nummern in Seitennamen bei
+# Open Data Berlin gefunden wurden. Es ist also von einem Skriptfehler
+# auszugehen. Hingegen Namen die mit einem Datum oder einer Jahreszahl
+# enden wurden beibehalten.
 #
-# Referenzen Webtrekk, page visits und impression:
-# https://documentation.mapp.com/1.0/en/basic-metrics-page-impressions-visits-visitors-7211156.html 
-# https://engel-zimmermann.de/blog/visits-views-und-page-impressions-eine-kleine-fuehrung-durch-den-zahlendschungel/
+# Referenzen Webtrekk, page visits und impression: 
+# [1] https://documentation.mapp.com/1.0/en/basic-metrics-page-impressions-visits-visitors-7211156.html (letzer Aufruf: 05.12.2022)
+# [2] https://engel-zimmermann.de/blog/visits-views-und-page-impressions-eine-kleine-fuehrung-durch-den-zahlendschungel/ (letzer Aufruf: 05.12.2022)
+# [3] https://www.beyond-media.de/blog/artikel/page-impressions-definition-und-erklaerung-der-kennzahl/  (letzer Aufruf: 05.12.2022)
 
 # Solution of b)
 # p2
