@@ -178,10 +178,11 @@ substituteData <- function(data) {
 ####### FIND DUPLICATES START #######
 aggregateData <- function(data_sub) {
   # Find the duplicates
-  data_agg <- data_sub[(duplicated(data_sub$page) | duplicated(data_sub$page, fromLast = T)),]
+  # data_dup <- data_sub[(duplicated(data_sub$page) | duplicated(data_sub$page, fromLast = T)),]
+  
   # Sum the amount of visits and replace the 0's with NA
-  data_agg <- aggregate(x = data_agg[ , colnames(data_agg) != "page"],             # Mean by group
-            by = list(data_agg$page),
+  data_agg <- aggregate(x = data_sub[ , colnames(data_sub) != "page"], # Mean by group
+            by = list(data_sub$page),
             FUN = sum,
             na.rm = TRUE
             )
@@ -228,6 +229,7 @@ fun_bar_chart <- function(data_enr_temp, number_to_display, decreasing = T, orde
   # Order by sum of visits and page impressions
   data_enr_temp['sum_pi_v'] <- data_enr_temp$sum_pi - data_enr_temp$sum_v
   data_enr_temp <- data_enr_temp[order(data_enr_temp[orderBy], decreasing = decreasing), ]
+  # (data_enr_temp[, c("page", "sum_pi", "sum_v")])
   
   # Get the 10 highest/lowest per class
   top10 <- data_enr_temp[which(data_enr_temp$page %in% head(data_enr_temp, number_to_display)$page),]
@@ -280,11 +282,39 @@ task_A <- function(data_enr){
 # Use the function of a)
 task_B <- function (data_enr) {
   p2 <- fun_bar_chart(data_enr, 10, F, "sum_pi")
-  return(p2)
+  
+  num_of_zero_visits <- sum(data_enr$sum_v <= 0)
+  
+  # Histogram for the page impressions < 100
+  histogram <- ggplot(data_enr[data_enr$sum_pi < 100, ]) +
+    geom_histogram(aes(sum_pi), fill = "#e64823", binwidth=0.9) +
+    ylab("Anzahl an Seiten") + xlab("Summe der Page Impressions") +
+    ggtitle("Histogram über die Summe der Page Impressions kleiner 100") +
+    labs(fill='') +
+    theme_linedraw()+
+    theme(
+      legend.position = "top",
+      text = element_text(size = 14), 
+      plot.title = element_text(hjust = 0.5, size=18),
+      axis.title=element_text(size=14,face="bold"),
+      axis.text = element_text(size = 14)+
+      theme(
+        text = element_text(size = 14), 
+        plot.title = element_text(hjust = 0.5, size=18),
+        axis.title=element_text(size=14,face="bold"),
+        axis.text = element_text(size = 14)
+      )
+    )
+  
+  # List of all pages with less than 10 page impressions
+  less_than_10_impressions <- data_enr[data_enr$sum_pi < 10, ]
+  
+  # Example page for the argumentation
+  example_page <- less_than_10_impressions[less_than_10_impressions$page %in% c("anzahl-arbeitsloser-frauen-berlin-1995-2010", "arbeitslose-veränderung-2013-2014-wms"), c("page", "sum_v", "sum_pi")]
+  
+  return(list("plot"=p2, "num_of_zero_visits"=num_of_zero_visits, "histogram"=histogram, "less_than_10_impressions" = less_than_10_impressions, "example_page" = example_page))
 }
 
-# TODO: Write some queries for searching for pages with zero visits
-# TODO: Write some queries for searching how many pages have one visit
 
 # View(melted)
 ####### TASK B) 10 least used pages END#######
@@ -331,6 +361,7 @@ task_E <- function(data_enr){
 
 ###### SOLUTIONS #####
 data_enr <- loadData() %>% substituteData() %>% aggregateData() %>% enrichData()
+# View(loadData() |> substituteData() |> aggregateData())
 # a) Die 10 meist benutzen Datensätze: 
 task_A(data_enr)
 # (Plot: p1) Die Grafik zeigt die
@@ -367,8 +398,41 @@ task_A(data_enr)
 # [2] https://engel-zimmermann.de/blog/visits-views-und-page-impressions-eine-kleine-fuehrung-durch-den-zahlendschungel/ (letzer Aufruf: 05.12.2022)
 # [3] https://www.beyond-media.de/blog/artikel/page-impressions-definition-und-erklaerung-der-kennzahl/  (letzer Aufruf: 05.12.2022)
 
-# Solution of b)
-# p2
+# Solution of b) Auskunft über die 10 am wenigsten benutzten Dienste
+solution_B <- task_B(data_enr)
+
+# Als ersten Gedanken über die (zehn) am wenigsten benutzten Dienste denkt man,
+# dass verschiedene Dienste 0 visits und damit 0 impressions haben müssen. Doch
+# der Datensatz enthält keinen Dienst der nicht besucht oder aufgerufen wurde.
+# Volgende Abfrage bestätigt das:
+solution_B["num_of_zero_visits"]
+# Das kann darauf zurückzuführen sein, dass das Skript einen Dienst zur Liste 
+# nur dann hinzufügt, wenn er aufgerufen wird. Dementsprechend ist es schwierig
+# auf basis der vorhandenen Daten die 10 wenigsten Datensätze zu finden, weil
+# man nicht davon ausgehen kann, dass man alle vorhandenen Dienste hat.
+#
+# Ein weiterer Punkt ist, dass viele Daten existieren, die nur sehr wenige Page
+# impressions haben. Das folgende Histogram zeigt, die Anzahl an Seiten für die
+# Summe der Page Impressions kleiner als 100.
+solution_B["histogram"]
+# Man sieht, dass gerade sich im Bereich von 0 bis 10 Page Impressions sehr viele Seiten
+# sammeln. Es existieren knapp über 600 Datensätze, die nur eine  und 
+# ca. 350, die zwei Page Impression haben. Das ist fast ein drittel der bereinigten
+# und danach aggregierten Daten. Weil dieser Datensatz nicht die komplette Zeit
+# von Open Data Berlin abdeckt und erst im Januar 2019 anfängt, könnten diese Seiten
+# schon früher existiert haben und öfters aufgerufen worden sein. Zum Beispiel die
+# Seite "arbeitslose-veränderung-2013-2014-wms" hat 2 Page Impressions und Visits und
+# wurde am 31.12.2015 veröffentlicht und das letzte mal aktualisiert [4].
+# Andere Datensätze, wie zum Beispiel "anzahl-arbeitsloser-frauen-berlin-1995-2010"
+# existieren hingegen heutzutage garnicht mehr (bzw. haben vielleicht nie existiert)
+# und können deswegen nicht (mehr) aufgerufen werden [5].
+solution_B["example_page"]
+
+solution_B["plot"]
+# Referenzen zu den Datensätzen:
+# [4] https://daten.berlin.de/datensaetze/arbeitslose-ver%C3%A4nderung-2013-2014-wms  (letzer Aufruf: 06.12.2022)
+# [5] https://daten.berlin.de/search/node/anzahl%20arbeitsloser%20frauen%20berlin   (letzer Aufruf: 06.12.2022)
+
 # TODO: Write Answer
 # Answer: 
 
