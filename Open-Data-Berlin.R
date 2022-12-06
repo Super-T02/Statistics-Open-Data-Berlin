@@ -12,7 +12,7 @@
 # Funktionen zum bereinigen und aggregieren der Daten.
 
 
-####### Start des Skripts####### 
+####### Start des Skripts ####### 
 rm(list = ls())
 setwd("C:/Users/tomfr/OneDrive/Studium/UNI/5. Semester/Data Sience/Prüfung")
 library(tidyverse)
@@ -195,7 +195,7 @@ aggregateData <- function(data_sub) {
 
 
 
-####### PREPARE SUMS START#######
+####### PREPARE SUMS START #######
 enrichData <- function(data_agg) {
   data_enr <- data_agg
   
@@ -219,7 +219,7 @@ enrichData <- function(data_agg) {
 
 
 
-####### TASK A) 10 most used pages ALTRNATIVE START#######
+####### TASK A) 10 most used pages ALTRNATIVE START #######
 # Function for chart
 fun_bar_chart <- function(data_enr_temp, number_to_display, decreasing = T, orderBy = "sum_pi") {
   # Order by sum of visits and page impressions
@@ -266,12 +266,12 @@ task_A <- function(data_enr){
   p1 <- fun_bar_chart(data_enr, 10, T, "sum_pi")
   return(p1)
 }
-####### TASK A) 10 most used pages END#######
+####### TASK A) 10 most used pages END #######
 
 
 
 
-####### TASK B) 10 least used pages START#######
+####### TASK B) 10 least used pages START #######
 # Use the function of a)
 task_B <- function (data_enr) {
   # Was the first idea but not used in the final solution
@@ -290,14 +290,8 @@ task_B <- function (data_enr) {
       legend.position = "top",
       text = element_text(size = 14), 
       plot.title = element_text(hjust = 0.5, size=18),
-      axis.title=element_text(size=14,face="bold"),
-      axis.text = element_text(size = 14)+
-      theme(
-        text = element_text(size = 14), 
-        plot.title = element_text(hjust = 0.5, size=18),
-        axis.title=element_text(size=14,face="bold"),
-        axis.text = element_text(size = 14)
-      )
+      axis.title = element_text(size=14,face="bold"),
+      axis.text = element_text(size = 14)
     )
   
   # List of all pages with less than 10 page impressions
@@ -311,12 +305,12 @@ task_B <- function (data_enr) {
   
   return(list("list_of_elements"=list_of_elements, "num_of_zero_visits"=num_of_zero_visits, "histogram"=histogram, "less_than_10_impressions" = less_than_10_impressions, "example_page" = example_page))
 }
-####### TASK B) 10 least used pages END#######
+####### TASK B) 10 least used pages END #######
 
 
 
 
-####### TASK D)  impressions ~ visits#######
+####### TASK D)  impressions ~ visits #######
 task_D <-function(data_enr) {
   # Test if there are in one data set more impressions than visits
   pi_smaller_v = sum(data_enr$sum_pi < data_enr$sum_v)
@@ -326,10 +320,18 @@ task_D <-function(data_enr) {
   
   # Look for a relation ship
   p3 <- ggplot(data_enr, aes(log(sum_v), log(sum_pi))) +
-    geom_jitter(alpha=0.05) +
-    geom_smooth(method = 'loess', formula = "y ~ x") +
+    geom_jitter(alpha=0.3) +
+    geom_smooth(method = 'loess', formula = "y ~ x", color="#e64823") +
     labs(title = "Verhältnis zwischen Page Impressions und Visits") + 
-    xlab("log(Summe von Page Visits)") + ylab("log(Summe von Page Impressions)")
+    xlab("log(Summe von Page Visits)") + ylab("log(Summe von Page Impressions)") +
+    theme_minimal() +
+    theme(
+      legend.position = "top",
+      text = element_text(size = 14), 
+      plot.title = element_text(hjust = 0.5, size=18),
+      axis.title = element_text(size=14,face="bold"),
+      axis.text = element_text(size = 14)
+    )
   return(list("plot" = p3, "pi_smaller_v"=pi_smaller_v, "pi_equal_v"=pi_equal_v))
 }
 ####### TASK D) visits ~ impressions#######
@@ -337,21 +339,22 @@ task_D <-function(data_enr) {
 
 
 
-####### TASK E)  Started pages#######
+####### TASK E)  Started pages ###### 
 # From TASK D) we know that every page with at least one impression have one visit.
 # So we can filter through the first date
 task_E <- function(data_enr){
   start_pages <- data_enr[!(is.na(data_enr$X2019.02.v)), "page"]
-  return (start_pages)
+  return (list("list_beginners"=start_pages))
 }
 # Answer: The in start_pages listed pages are start pages.
-####### TASK E) visits ~ impressions#######
+####### TASK E) visits ~ impressions###### 
 
 
-###### SOLUTIONS #####
+###### SOLUTIONS###### 
 # Load all data
 data_enr <- loadData() %>% substituteData() %>% aggregateData() %>% enrichData()
 
+#-------------------------------------------------------------------------------
 # a) Die 10 meist benutzen Datensätze: 
 solution_A <- task_A(data_enr); solution_A
 # Die Grafik zeigt die
@@ -387,9 +390,9 @@ solution_A <- task_A(data_enr); solution_A
 # [1] https://documentation.mapp.com/1.0/en/basic-metrics-page-impressions-visits-visitors-7211156.html (letzer Aufruf: 05.12.2022)
 # [2] https://engel-zimmermann.de/blog/visits-views-und-page-impressions-eine-kleine-fuehrung-durch-den-zahlendschungel/ (letzer Aufruf: 05.12.2022)
 # [3] https://www.beyond-media.de/blog/artikel/page-impressions-definition-und-erklaerung-der-kennzahl/  (letzer Aufruf: 05.12.2022)
+#-------------------------------------------------------------------------------
 
-
-
+#-------------------------------------------------------------------------------
 # Solution of b) Auskunft über die 10 am wenigsten benutzten Dienste
 solution_B <- task_B(data_enr)
 
@@ -436,10 +439,9 @@ solution_B["list_of_elements"]
 
 # Solution of c)
 # Please start the shiny app
+#-------------------------------------------------------------------------------
 
-
-
-
+#-------------------------------------------------------------------------------
 # Solution of d) Verhältnis von Page Impressions zu Page Visits
 solution_D <- task_D(data_enr)
 
@@ -461,10 +463,14 @@ nrow(data_enr)
 solution_D["plot"]
 # Daraus folgt, dass durch den Zusammenhang, dass Visits auch eine Impression triggern, die 
 # Page Impressions proportional zu den Visits wachsen.
+#-------------------------------------------------------------------------------
 
-
+#-------------------------------------------------------------------------------
 # Solution of e) Mit welchen Daten wurde begonnen?
-task_E(data_enr)
-# TODO: Write Answer
-# start_pages
-###### SOLUTIONS END #####
+solution_E <- task_E(data_enr)
+# Um zu sehen, mit welchen Seiten im dargestellten zeitraum begonnen wurde, müssen
+# die Seiten ausgegeben werden, die im ersten Monat mindestens einen Visit haben.
+# Folgende Ausgabe stellt diese Seiten dar:
+solution_E['list_beginners']
+#-------------------------------------------------------------------------------
+###### SOLUTIONS END ###### 
