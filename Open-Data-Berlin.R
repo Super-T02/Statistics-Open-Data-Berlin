@@ -414,7 +414,7 @@ solution_B["histogram"]
 # sammeln. Es existieren knapp über 600 Datensätze, die nur eine  und 
 # ca. 350, die zwei Page Impression haben. Das ist fast ein drittel der bereinigten
 # und danach aggregierten Daten. Weil dieser Datensatz nicht die komplette Zeit
-# von Open Data Berlin abdeckt und erst im Januar 2019 anfängt, könnten diese Seiten
+# von Open Data Berlin abdeckt und erst im Februar 2019 anfängt, könnten diese Seiten
 # schon früher existiert haben und öfters aufgerufen worden sein. Zum Beispiel die
 # Seite "arbeitslose-veränderung-2013-2014-wms" hat 2 Page Impressions und Visits und
 # wurde am 31.12.2015 veröffentlicht und auch das letzte mal aktualisiert [4].
