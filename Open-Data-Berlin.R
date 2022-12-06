@@ -1,3 +1,18 @@
+####### Wichtige Informationen ####### 
+# Das Folgende Skript behandelt die Prüfungsaufgabe des Kurses Data Science
+# an der DHBW Stuttgart im Sutdiengang B. Sc. Informatik.
+#
+# Das Skript ist wie folgt aufegeilt:
+# - zu Beginn werden benötigte Bibliotheken geladen
+# - Danach werden die Daten geladen und bereinigt, aggregiert bzw. Duplikate entfernt und um Informationen ergänzt
+# - Zum Schluss werden die einzelnen Aufgaben bearbeitet und im Lösungsabschnitt beantwortet
+# 
+# Hinweis: Aufgabe c) wird nicht in diesem Skript beantwortet. Hierfür wird ein extra
+# Shiny skript gestartet (TODO: SKRIPT). Die Shiny App benutzt aber die hier definierten
+# Funktionen zum bereinigen und aggregieren der Daten.
+
+
+####### Start des Skripts####### 
 rm(list = ls())
 setwd("C:/Users/tomfr/OneDrive/Studium/UNI/5. Semester/Data Sience/Prüfung")
 library(tidyverse)
@@ -77,7 +92,6 @@ substituteData <- function(data) {
   others <- setdiff(others, grep('√É∆í√Ç¬§', data$page))
   others <- setdiff(others, grep('√É∆í√Ü‚Äô√É‚Ä†√¢‚Ç¨‚Ñ¢√É∆í√¢‚Ç¨≈°√É‚Äö√Ç¬º', data$page))
   others <- setdiff(others, grep('√É¬É¬º', data$page))
-  # View(data[others,])
   
   # Thesis is a pattern for the most escaped letters:
   # - √(something)º = ü Problem:
@@ -112,17 +126,13 @@ substituteData <- function(data) {
   data_sub$page <- gsub(",|(¬¨)|!|&| Óåì", "", data_sub$page)
   data_sub$page <- gsub("‚Äã|‚Äû|‚Äú", "", data_sub$page)
   
-  # Used for finding strange signs
+  # The following code was used for finding strange signs
   # invalid <- gsub("[a-z\\._äöüß®§€]|-","",data_sub$page, ignore.case = T)
   # data_sub$page[invalid != ""]
   # invalid[invalid != ""]
   # data_sub$page[invalid %in% ""]
   
-  # View(data_sub)
-  # Unsolved Problem: ¬ is sometimes in the data but don't know what it does
-  
   # correct malicious data
-  # data_sub$page[data_sub$page == ""] <- ""
   data_sub$page[data_sub$page == "koordinaten-der-zugangsmöglichkeiten-zu-stationen-0 Orignalquelle: daten.berlin.de Urheber der Daten auch VBB aber Version Mai 2018 Zuletzt aktualisiert 18. September 2018 10:58"] <- "koordinaten-der-zugangsmöglichkeiten-zu-stationen-0"
   data_sub$page[data_sub$page == "einwohnerinnen-texttt{und-einwohner-den-ortsteilen-berlins-am-30062016"] <- "einwohnerinnen-text-und-einwohner-den-ortsteilen-berlins-am-30062016"
   data_sub$page[data_sub$page == "vbb-fahrplandaten-gtfsxid=17259157000231570018615700190157002561570025915700262usg=ALkJrhgrmAYC4EL0Dhh2k3oF-zprTxEuCA"] <- "vbb-fahrplandaten-gtfs"
@@ -151,22 +161,12 @@ substituteData <- function(data) {
   data_sub$page[data_sub$page == "bücherschränke-im bezirk-lichtenberg"] <- "bücherschränke-im-bezirk-lichtenberg"
   data_sub$page[data_sub$page == "¬üenhandel"] <- "aus-und-einfuhr-außenhandel"
   data_sub$page <- gsub("-ua-", "-umweltatlas-", data_sub$page)
-  
-  # Equalize Services
-  # data_sub$page <- gsub("-wms(-[0-9]*)?", "", data_sub$page)
-  # data_sub$page <- gsub("-atom(-[0-9]*)?", "", data_sub$page)
-  # data_sub$page <- gsub("-wfs(-[0-9]*)?", "", data_sub$page)
-  # data_sub$page <- gsub("-gtfs(-[0-9]*)?", "", data_sub$page)
-  # data_sub$page <- gsub("[.]rdf", "", data_sub$page)
-  # data_sub$page <- gsub("[.]xml", "", data_sub$page)
   data_sub$page <- gsub("-v-2$", "-v2", data_sub$page) # Make different versions equal
   data_sub$page <- gsub("-[0-9]{1,2}$", "", data_sub$page) # Filter different page pages
   data_sub$page <- gsub("[a-f]+[0-9]+[0-9a-f]*$", "", data_sub$page) # No hex data
   data_sub$page <- gsub("-0$", "", data_sub$page) # Filter Zeros
-  
-  # Remove corrupt data
-  data_sub <- data_sub[-which(data_sub$page == 'a'), ]
-  data_sub <- data_sub[-which(data_sub$page == '1c35e89f-5725-4d46-bc5a-229'), ]
+  data_sub <- data_sub[-which(data_sub$page == 'a'), ] # No sense
+  data_sub <- data_sub[-which(data_sub$page == '1c35e89f-5725-4d46-bc5a-229'), ] # No sense
   
   return(data_sub)
 }
@@ -175,11 +175,8 @@ substituteData <- function(data) {
 
 
 
-####### FIND DUPLICATES START #######
+####### AGGREGATE DATA START #######
 aggregateData <- function(data_sub) {
-  # Find the duplicates
-  # data_dup <- data_sub[(duplicated(data_sub$page) | duplicated(data_sub$page, fromLast = T)),]
-  
   # Sum the amount of visits and replace the 0's with NA
   data_agg <- aggregate(x = data_sub[ , colnames(data_sub) != "page"], # Mean by group
             by = list(data_sub$page),
@@ -191,7 +188,7 @@ aggregateData <- function(data_sub) {
   
   return(data_agg)
 }
-####### FIND DUPLICATES END #######
+####### AGGREGATE DATA END #######
 
 
 
@@ -213,7 +210,6 @@ enrichData <- function(data_agg) {
   data_enr['sum_pi'] <- sum_pi
   data_enr['sum_v'] <- sum_v
   data_enr['sum'] <- sum
-  # View(data_enr[,c('page','sum_v', 'sum_pi')])
   
   return(data_enr)
 }
@@ -229,7 +225,6 @@ fun_bar_chart <- function(data_enr_temp, number_to_display, decreasing = T, orde
   # Order by sum of visits and page impressions
   data_enr_temp['sum_pi_v'] <- data_enr_temp$sum_pi - data_enr_temp$sum_v
   data_enr_temp <- data_enr_temp[order(data_enr_temp[orderBy], decreasing = decreasing), ]
-  # (data_enr_temp[, c("page", "sum_pi", "sum_v")])
   
   # Get the 10 highest/lowest per class
   top10 <- data_enr_temp[which(data_enr_temp$page %in% head(data_enr_temp, number_to_display)$page),]
@@ -237,11 +232,9 @@ fun_bar_chart <- function(data_enr_temp, number_to_display, decreasing = T, orde
   # Make two fields for every variable of each page
   melted <- melt(top10[,c("page", "sum_pi", "sum_v")], id="page")
   
-  # melted <- melted[order(-melted$variable, -melted$value, decreasing = F), ]
-  
   # Make a factor to order the data
   melted$page <- factor(melted$page, levels = unique(melted$page),ordered = T)
-  # View(melted)
+
   # Define Title
   title <- ""
   if(decreasing) {
@@ -281,13 +274,14 @@ task_A <- function(data_enr){
 ####### TASK B) 10 least used pages START#######
 # Use the function of a)
 task_B <- function (data_enr) {
-  p2 <- fun_bar_chart(data_enr, 10, F, "sum_pi")
+  # Was the first idea but not used in the final solution
+  # p2 <- fun_bar_chart(data_enr, 10, F, "sum_pi")
   
   num_of_zero_visits <- sum(data_enr$sum_v <= 0)
   
   # Histogram for the page impressions < 100
   histogram <- ggplot(data_enr[data_enr$sum_pi < 100, ]) +
-    geom_histogram(aes(sum_pi), fill = "#e64823", binwidth=0.9) +
+    geom_histogram(aes(sum_pi), fill = "#e64823", color="black", binwidth=1) +
     ylab("Anzahl an Seiten") + xlab("Summe der Page Impressions") +
     ggtitle("Histogram über die Summe der Page Impressions kleiner 100") +
     labs(fill='') +
@@ -312,11 +306,11 @@ task_B <- function (data_enr) {
   # Example page for the argumentation
   example_page <- less_than_10_impressions[less_than_10_impressions$page %in% c("anzahl-arbeitsloser-frauen-berlin-1995-2010", "arbeitslose-veränderung-2013-2014-wms"), c("page", "sum_v", "sum_pi")]
   
-  return(list("plot"=p2, "num_of_zero_visits"=num_of_zero_visits, "histogram"=histogram, "less_than_10_impressions" = less_than_10_impressions, "example_page" = example_page))
+  # List of elements with one impression
+  list_of_elements <- data_enr[data_enr$sum_pi == 1, 'page']
+  
+  return(list("list_of_elements"=list_of_elements, "num_of_zero_visits"=num_of_zero_visits, "histogram"=histogram, "less_than_10_impressions" = less_than_10_impressions, "example_page" = example_page))
 }
-
-
-# View(melted)
 ####### TASK B) 10 least used pages END#######
 
 
@@ -325,23 +319,18 @@ task_B <- function (data_enr) {
 ####### TASK D)  impressions ~ visits#######
 task_D <-function(data_enr) {
   # Test if there are in one data set more impressions than visits
-  sum(data_enr$sum_pi < data_enr$sum_v) # 0
+  pi_smaller_v = sum(data_enr$sum_pi < data_enr$sum_v)
   
   # Test how many pages have the same amount of impressions and visits
-  sum(data_enr$sum_pi == data_enr$sum_v) # 2147
+  pi_equal_v = sum(data_enr$sum_pi == data_enr$sum_v)
   
   # Look for a relation ship
-  p3 <- ggplot(data_enr[,], aes(sum_v, sum_pi)) +
+  p3 <- ggplot(data_enr, aes(log(sum_v), log(sum_pi))) +
     geom_point() +
     geom_smooth(method = 'loess', formula = "y ~ x") +
     labs(title = "Relationship between impressions and visits") + 
     xlab("Sum of visits by page") + ylab("Sum of page impressions by page")
-  
-  # Answer: There are always more or equal impressions than visits. That means
-  # every visit is a impression, but a visit can have multiple impressions. Looking
-  # at the relationship, we can see that more visits result in more impressions.
-  
-  return(p3)
+  return(list("plot"=p3, "pi_smaller_v"=pi_smaller_v, "pi_equal_v"=pi_equal_v))
 }
 ####### TASK D) visits ~ impressions#######
 
@@ -360,11 +349,12 @@ task_E <- function(data_enr){
 
 
 ###### SOLUTIONS #####
+# Load all data
 data_enr <- loadData() %>% substituteData() %>% aggregateData() %>% enrichData()
-# View(loadData() |> substituteData() |> aggregateData())
+
 # a) Die 10 meist benutzen Datensätze: 
-task_A(data_enr)
-# (Plot: p1) Die Grafik zeigt die
+solution_A <- task_A(data_enr); solution_A
+# Die Grafik zeigt die
 # 10 meist genutzten Seiten/Dienste von Open Data Berlin. Dabei sind
 # die Page Visits und die Anzahl der Page Impressions dargestellt.
 # 
@@ -398,6 +388,8 @@ task_A(data_enr)
 # [2] https://engel-zimmermann.de/blog/visits-views-und-page-impressions-eine-kleine-fuehrung-durch-den-zahlendschungel/ (letzer Aufruf: 05.12.2022)
 # [3] https://www.beyond-media.de/blog/artikel/page-impressions-definition-und-erklaerung-der-kennzahl/  (letzer Aufruf: 05.12.2022)
 
+
+
 # Solution of b) Auskunft über die 10 am wenigsten benutzten Dienste
 solution_B <- task_B(data_enr)
 
@@ -407,43 +399,66 @@ solution_B <- task_B(data_enr)
 # Volgende Abfrage bestätigt das:
 solution_B["num_of_zero_visits"]
 # Das kann darauf zurückzuführen sein, dass das Skript einen Dienst zur Liste 
-# nur dann hinzufügt, wenn er aufgerufen wird. Dementsprechend ist es schwierig
-# auf basis der vorhandenen Daten die 10 wenigsten Datensätze zu finden, weil
+# nur dann hinzufügt, wenn er aufgerufen wird. Es ist folglich schwierig
+# auf Basis der vorhandenen Daten die 10 wenigsten Datensätze zu finden, weil
 # man nicht davon ausgehen kann, dass man alle vorhandenen Dienste hat.
 #
 # Ein weiterer Punkt ist, dass viele Daten existieren, die nur sehr wenige Page
-# impressions haben. Das folgende Histogram zeigt, die Anzahl an Seiten für die
+# Impressions haben. Das folgende Histogram zeigt, die Anzahl an Seiten für die
 # Summe der Page Impressions kleiner als 100.
 solution_B["histogram"]
-# Man sieht, dass gerade sich im Bereich von 0 bis 10 Page Impressions sehr viele Seiten
+# Man sieht, dass  sich im Bereich von 0 bis 10 Page Impressions sehr viele Seiten
 # sammeln. Es existieren knapp über 600 Datensätze, die nur eine  und 
 # ca. 350, die zwei Page Impression haben. Das ist fast ein drittel der bereinigten
 # und danach aggregierten Daten. Weil dieser Datensatz nicht die komplette Zeit
 # von Open Data Berlin abdeckt und erst im Januar 2019 anfängt, könnten diese Seiten
 # schon früher existiert haben und öfters aufgerufen worden sein. Zum Beispiel die
 # Seite "arbeitslose-veränderung-2013-2014-wms" hat 2 Page Impressions und Visits und
-# wurde am 31.12.2015 veröffentlicht und das letzte mal aktualisiert [4].
+# wurde am 31.12.2015 veröffentlicht und auch das letzte mal aktualisiert [4].
 # Andere Datensätze, wie zum Beispiel "anzahl-arbeitsloser-frauen-berlin-1995-2010"
 # existieren hingegen heutzutage garnicht mehr (bzw. haben vielleicht nie existiert)
 # und können deswegen nicht (mehr) aufgerufen werden [5].
 solution_B["example_page"]
 
-solution_B["plot"]
+# Zusammenfasseng kann gesagt werden, dass es im Datensatz Seiten gibt, die
+# eine Page Visit und Page Impression habe (siehe nächste Ausgabe).
+solution_B["list_of_elements"]
+# Sie sind im Datensatz die am wenigst benutzten Seiten. Aber müssen nicht der 
+# realität entsprechen, weil das Tracking Tool gewechselt wurde und nicht alle
+# Seiten enthalten sind.
+# 
 # Referenzen zu den Datensätzen:
 # [4] https://daten.berlin.de/datensaetze/arbeitslose-ver%C3%A4nderung-2013-2014-wms  (letzer Aufruf: 06.12.2022)
 # [5] https://daten.berlin.de/search/node/anzahl%20arbeitsloser%20frauen%20berlin   (letzer Aufruf: 06.12.2022)
 
-# TODO: Write Answer
-# Answer: 
+
+
 
 # Solution of c)
 # Please start the shiny app
 
-# Solution of d)
+
+
+
+# Solution of d) Verhältnis von Page Impressions zu Page Visits
+solution_D <- task_D(data_enr)
+
+# Das Verhältnis von Page Impressions zu Page Visits lässt sich wie folgt beschreiben.
+# Aus Aufgabe a) kann entnommen werden, dass beim tracken eines Page Visit eine Page Impression 
+# mit getrackt wird aber nicht umgekehrt. Somit muss es mindestens so viele Page Impressions, wie
+# Page Visits geben. Folgende Abfrage sucht im Datensatz nach einer Seite mit mehr
+# Visits als Impressions. Das Ergebnis ist 0.
+solution_D["pi_smaller_v"]
+
+solution_D["plot"]
+solution_D["pi_equal_v"]
+nrow(data_enr)
 # TODO: New plot for the other shiny app and write Answer
 # p3 # and Answer: There are always more or equal impressions than visits. That means
 # every visit is a impression, but a visit can have multiple impressions. Looking
 # at the relationship, we can see that more visits result in more impressions.
+
+
 
 # Solution of e)
 task_E(data_enr)
