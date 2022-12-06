@@ -326,11 +326,11 @@ task_D <-function(data_enr) {
   
   # Look for a relation ship
   p3 <- ggplot(data_enr, aes(log(sum_v), log(sum_pi))) +
-    geom_point() +
+    geom_jitter(alpha=0.05) +
     geom_smooth(method = 'loess', formula = "y ~ x") +
-    labs(title = "Relationship between impressions and visits") + 
-    xlab("Sum of visits by page") + ylab("Sum of page impressions by page")
-  return(list("plot"=p3, "pi_smaller_v"=pi_smaller_v, "pi_equal_v"=pi_equal_v))
+    labs(title = "Verhältnis zwischen Page Impressions und Visits") + 
+    xlab("log(Summe von Page Visits)") + ylab("log(Summe von Page Impressions)")
+  return(list("plot" = p3, "pi_smaller_v"=pi_smaller_v, "pi_equal_v"=pi_equal_v))
 }
 ####### TASK D) visits ~ impressions#######
 
@@ -449,21 +449,22 @@ solution_D <- task_D(data_enr)
 # Page Visits geben. Folgende Abfrage sucht im Datensatz nach einer Seite mit mehr
 # Visits als Impressions. Das Ergebnis ist 0.
 solution_D["pi_smaller_v"]
-
-solution_D["plot"]
+# Die nächste Ausgabe betrachtet, wie viele Seiten gleich viel Page Impressions
+# wie Visits haben:
 solution_D["pi_equal_v"]
 nrow(data_enr)
-# TODO: New plot for the other shiny app and write Answer
-# p3 # and Answer: There are always more or equal impressions than visits. That means
-# every visit is a impression, but a visit can have multiple impressions. Looking
-# at the relationship, we can see that more visits result in more impressions.
+# Daraus folgt, dass knapp die Hälfte der Seiten genau gleich viele Page Impressions und
+# Visits hat. Das liegt vermutlich mit unter daran, dass knapp ein drittel der Daten
+# genau einen Page Visitt und eine Page Impression haben. Man könnte also vermuten,
+# dass mit mehr Visits mehr Page Impressions kommen so, dass es mehr Impressions als 
+# Visits gibt. Der nächste Plot gibt das Verhältnis von Page Impressions zu Visits aus.
+solution_D["plot"]
+# Daraus folgt, dass durch den Zusammenhang, dass Visits auch eine Impression triggern, die 
+# Page Impressions proportional zu den Visits wachsen.
 
 
-
-# Solution of e)
+# Solution of e) Mit welchen Daten wurde begonnen?
 task_E(data_enr)
 # TODO: Write Answer
 # start_pages
-
-
 ###### SOLUTIONS END #####
