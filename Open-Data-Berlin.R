@@ -344,7 +344,7 @@ task_D <-function(data_enr) {
 # So we can filter through the first date
 task_E <- function(data_enr){
   start_pages <- data_enr[!(is.na(data_enr$X2019.02.v)), "page"]
-  return (list("list_beginners"=start_pages))
+  return(list("list_beginners" = start_pages))
 }
 # Answer: The in start_pages listed pages are start pages.
 ####### TASK E) visits ~ impressions###### 
@@ -371,7 +371,7 @@ solution_A <- task_A(data_enr); solution_A
 # innerhalb von der Session (endet nach 30 Minuten inaktivität) die
 # Seite erneut öffnet bzw. lädt werden keine visits erzeugt sondern
 # nur Impressions. Schließlich lässt sich sagen, dass ein Page Visit
-# auch immer eine Page Impression auslöst [1-3]. 
+# auch immer eine Page Impression auslöst [1-3].
 #
 # Aufgrund dieser Definition von Page Imrpessions und Visits wurden in
 # Plot 1 (p1) die Seiten nach ihrer Summe von page impressions
@@ -411,7 +411,7 @@ solution_B["num_of_zero_visits"]
 # Summe der Page Impressions kleiner als 100.
 solution_B["histogram"]
 # Man sieht, dass  sich im Bereich von 0 bis 10 Page Impressions sehr viele Seiten
-# sammeln. Es existieren knapp über 600 Datensätze, die nur eine  und 
+# sammeln. Es existieren knapp über 600 Datensätze, die nur eine  und
 # ca. 350, die zwei Page Impression haben. Das ist fast ein drittel der bereinigten
 # und danach aggregierten Daten. Weil dieser Datensatz nicht die komplette Zeit
 # von Open Data Berlin abdeckt und erst im Februar 2019 anfängt, könnten diese Seiten
@@ -433,10 +433,9 @@ solution_B["list_of_elements"]
 # Referenzen zu den Datensätzen:
 # [4] https://daten.berlin.de/datensaetze/arbeitslose-ver%C3%A4nderung-2013-2014-wms  (letzer Aufruf: 06.12.2022)
 # [5] https://daten.berlin.de/search/node/anzahl%20arbeitsloser%20frauen%20berlin   (letzer Aufruf: 06.12.2022)
+#-------------------------------------------------------------------------------
 
-
-
-
+#-------------------------------------------------------------------------------
 # Solution of c)
 # Please start the shiny app
 #-------------------------------------------------------------------------------
