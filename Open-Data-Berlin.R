@@ -1,14 +1,14 @@
 ####### Wichtige Informationen ####### 
 # Das Folgende Skript behandelt die Prüfungsaufgabe des Kurses Data Science
-# an der DHBW Stuttgart im Sutdiengang B. Sc. Informatik.
+# an der DHBW Stuttgart im Studiengang B. Sc. Informatik.
 #
-# Das Skript ist wie folgt aufegeilt:
+# Das Skript ist wie folgt aufgeteilt:
 # - zu Beginn werden benötigte Bibliotheken geladen
 # - Danach werden die Daten geladen und bereinigt, aggregiert bzw. Duplikate entfernt und um Informationen ergänzt
 # - Zum Schluss werden die einzelnen Aufgaben bearbeitet und im Lösungsabschnitt beantwortet
 # 
 # Hinweis: Aufgabe c) wird nicht in diesem Skript beantwortet. Hierfür wird ein extra
-# Shiny skript gestartet (TODO: SKRIPT). Die Shiny App benutzt aber die hier definierten
+# Shiny Skript gestartet (TODO: SKRIPT). Die Shiny App benutzt aber die hier definierten
 # Funktionen zum bereinigen und aggregieren der Daten.
 
 
@@ -219,7 +219,7 @@ enrichData <- function(data_agg) {
 
 
 
-####### TASK A) 10 most used pages ALTRNATIVE START #######
+####### TASK A) 10 MOST USED PAGES START #######
 # Function for chart
 fun_bar_chart <- function(data_enr_temp, number_to_display, decreasing = T, orderBy = "sum_pi") {
   # Order by sum of visits and page impressions
@@ -238,9 +238,9 @@ fun_bar_chart <- function(data_enr_temp, number_to_display, decreasing = T, orde
   # Define Title
   title <- ""
   if(decreasing) {
-    title <- paste("Die", number_to_display ,"meist genutzten Seiten nach Page Imrpessions", sep = " ")
+    title <- paste("Die", number_to_display ,"meist genutzten Seiten nach Page Impressions", sep = " ")
   } else {
-    title <- paste("Die", number_to_display ,"am wenigsten genutzten Seiten nach Page Imrpessions", sep = " ")
+    title <- paste("Die", number_to_display ,"am wenigsten genutzten Seiten nach Page Impressions", sep = " ")
   }
   
   # Make plot
@@ -266,7 +266,7 @@ task_A <- function(data_enr){
   p1 <- fun_bar_chart(data_enr, 10, T, "sum_pi")
   return(p1)
 }
-####### TASK A) 10 most used pages END #######
+####### TASK A) 10 MOST USED PAGES END #######
 
 
 
@@ -364,32 +364,32 @@ solution_A <- task_A(data_enr); solution_A
 # Unter einer Page Impression versteht man die Aufrufe einer Seite.
 # Jedes nicht automatische neuladen der Seite wird dabei getrackt.
 # Dazu zählt das erste mal öffnen, erneute laden, oder öffnen nach
-# einem lägneren Zeitraum [1-3]. Die Page Visits geben zwar auch
+# einem längeren Zeitraum [1-3]. Die Page Visits geben zwar auch
 # Seitenaufrufe an aber nur der erste in einer Session. Wobei eine
 # Session nach einer Inaktivität von 30 Minuten aufhört [1-3]. Somit
 # ist ein Visit der erste Besuch einer Seite. Wenn der Nutzer
-# innerhalb von der Session (endet nach 30 Minuten inaktivität) die
+# innerhalb von der Session (endet nach 30 Minuten Inaktivität) die
 # Seite erneut öffnet bzw. lädt werden keine visits erzeugt sondern
 # nur Impressions. Schließlich lässt sich sagen, dass ein Page Visit
 # auch immer eine Page Impression auslöst [1-3].
 #
-# Aufgrund dieser Definition von Page Imrpessions und Visits wurden in
+# Aufgrund dieser Definition von Page Impressions und Visits wurden in
 # Plot 1 (p1) die Seiten nach ihrer Summe von page impressions
 # geordnet. Weil Seiten mit mehr page impressions wurden häufiger
 # geöffnet und somit potentiell mehr benutzt.
 #
 # Außerdem wurden für die Grafik kaputte Datensätze entfernt und
-# escapete Buchstaben ersetzt. Abgesehen davon wurden Seitennamen die
-# mit einer Forlaufenden Nummer Enden als eine Seite Betrachtet, da
+# maskierte Buchstaben ersetzt. Abgesehen davon wurden Seitennamen die
+# mit einer fortlaufenden Nummer Enden als eine Seite Betrachtet, da
 # nach einer Recherche keine fortlaufenden nummern in Seitennamen bei
-# Open Data Berlin gefunden wurden. Es ist also von einem Skriptfehler
+# Open Data Berlin gefunden wurden. Es ist also von einem Skript Fehler
 # auszugehen. Hingegen Namen die mit einem Datum oder einer Jahreszahl
 # enden wurden beibehalten.
 #
 # Referenzen Webtrekk, page visits und impression: 
-# [1] https://documentation.mapp.com/1.0/en/basic-metrics-page-impressions-visits-visitors-7211156.html (letzer Aufruf: 05.12.2022)
-# [2] https://engel-zimmermann.de/blog/visits-views-und-page-impressions-eine-kleine-fuehrung-durch-den-zahlendschungel/ (letzer Aufruf: 05.12.2022)
-# [3] https://www.beyond-media.de/blog/artikel/page-impressions-definition-und-erklaerung-der-kennzahl/  (letzer Aufruf: 05.12.2022)
+# [1] https://documentation.mapp.com/1.0/en/basic-metrics-page-impressions-visits-visitors-7211156.html (letzter Aufruf: 05.12.2022)
+# [2] https://engel-zimmermann.de/blog/visits-views-und-page-impressions-eine-kleine-fuehrung-durch-den-zahlendschungel/ (letzter Aufruf: 05.12.2022)
+# [3] https://www.beyond-media.de/blog/artikel/page-impressions-definition-und-erklaerung-der-kennzahl/  (letzter Aufruf: 05.12.2022)
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
@@ -399,7 +399,7 @@ solution_B <- task_B(data_enr)
 # Als ersten Gedanken über die (zehn) am wenigsten benutzten Dienste denkt man,
 # dass verschiedene Dienste 0 visits und damit 0 impressions haben müssen. Doch
 # der Datensatz enthält keinen Dienst der nicht besucht oder aufgerufen wurde.
-# Volgende Abfrage bestätigt das:
+# Folgende Abfrage bestätigt das:
 solution_B["num_of_zero_visits"]
 # Das kann darauf zurückzuführen sein, dass das Skript einen Dienst zur Liste 
 # nur dann hinzufügt, wenn er aufgerufen wird. Es ist folglich schwierig
@@ -419,20 +419,20 @@ solution_B["histogram"]
 # Seite "arbeitslose-veränderung-2013-2014-wms" hat 2 Page Impressions und Visits und
 # wurde am 31.12.2015 veröffentlicht und auch das letzte mal aktualisiert [4].
 # Andere Datensätze, wie zum Beispiel "anzahl-arbeitsloser-frauen-berlin-1995-2010"
-# existieren hingegen heutzutage garnicht mehr (bzw. haben vielleicht nie existiert)
+# existieren hingegen heutzutage nicht mehr (bzw. haben vielleicht nie existiert)
 # und können deswegen nicht (mehr) aufgerufen werden [5].
 solution_B["example_page"]
 
-# Zusammenfasseng kann gesagt werden, dass es im Datensatz Seiten gibt, die
+# Zusammenfassung kann gesagt werden, dass es im Datensatz Seiten gibt, die
 # eine Page Visit und Page Impression habe (siehe nächste Ausgabe).
 solution_B["list_of_elements"]
 # Sie sind im Datensatz die am wenigst benutzten Seiten. Aber müssen nicht der 
-# realität entsprechen, weil das Tracking Tool gewechselt wurde und nicht alle
+# Realität entsprechen, weil das Tracking Tool gewechselt wurde und nicht alle
 # Seiten enthalten sind.
 # 
 # Referenzen zu den Datensätzen:
-# [4] https://daten.berlin.de/datensaetze/arbeitslose-ver%C3%A4nderung-2013-2014-wms  (letzer Aufruf: 06.12.2022)
-# [5] https://daten.berlin.de/search/node/anzahl%20arbeitsloser%20frauen%20berlin   (letzer Aufruf: 06.12.2022)
+# [4] https://daten.berlin.de/datensaetze/arbeitslose-ver%C3%A4nderung-2013-2014-wms  (letzter Aufruf: 06.12.2022)
+# [5] https://daten.berlin.de/search/node/anzahl%20arbeitsloser%20frauen%20berlin   (letzter Aufruf: 06.12.2022)
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
@@ -456,7 +456,7 @@ solution_D["pi_equal_v"]
 nrow(data_enr)
 # Daraus folgt, dass knapp die Hälfte der Seiten genau gleich viele Page Impressions und
 # Visits hat. Das liegt vermutlich mit unter daran, dass knapp ein drittel der Daten
-# genau einen Page Visitt und eine Page Impression haben. Man könnte also vermuten,
+# genau einen Page Visit und eine Page Impression haben. Man könnte also vermuten,
 # dass mit mehr Visits mehr Page Impressions kommen so, dass es mehr Impressions als 
 # Visits gibt. Der nächste Plot gibt das Verhältnis von Page Impressions zu Visits aus.
 solution_D["plot"]

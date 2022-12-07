@@ -1,13 +1,22 @@
+####### Wichtige Informationen ####### 
+# Das Folgende Skript behandelt die Prüfungsaufgabe des Kurses Data Science
+# an der DHBW Stuttgart im Studiengang B. Sc. Informatik.
 #
-# This is a Shiny web application. You can run the application by clicking
-# the 'Run App' button above.
-#
-# Find out more about building applications with Shiny here:
-#
-#    http://shiny.rstudio.com/
-#
+# Das Skript ist wie folgt aufgeteilt:
+# - zu Beginn werden benötigte Bibliotheken geladen
+# - Danach werden die Daten geladen und bereinigt, aggregiert bzw. Duplikate entfernt und um Informationen ergänzt
+# - Zum Schluss werden die einzelnen Aufgaben bearbeitet und im Lösungsabschnitt beantwortet
+# 
+# Hinweis: Aufgabe c) wird nicht in diesem Skript beantwortet. Hierfür wird ein extra
+# Shiny Skript gestartet (TODO: SKRIPT). Die Shiny App benutzt aber die hier definierten
+# Funktionen zum bereinigen und aggregieren der Daten.
 
 source("../Open-Data-Berlin.R")
+setwd("C:/Users/tomfr/OneDrive/Studium/UNI/5. Semester/Data Sience/Prüfung")
+library(tidyverse)
+library(ggplot2)
+library(tidyr)
+library(reshape2)
 library(shiny)
 
 ####### Define functions for the app START #######
@@ -24,8 +33,7 @@ generateColumnNames <- function(names) {
   return(result)
 }
 
-# Function generates the data of the new data frame for displaing it later
-# in the plot
+# Function generates the data of the new data frame for displaying it later in the plot
 generateData <- function(months, dataPage, mode = "pi"){
   vals <- c()
   for (month in months) {
