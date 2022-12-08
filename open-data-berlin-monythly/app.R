@@ -59,7 +59,7 @@ remove_rows <- function(frame) {
 
     }
   }
-  
+
   return(removed_row)
 }
 
@@ -84,12 +84,10 @@ fun_bar_chart <- function(data_enr_temp, page) {
     melted <- melted[-which(melted$month %in% remove_rows), ]
   }
 
-  # View(melted)
   title <- paste("Page impressions und visits von", page, "pro Monat", sep = " ")
   # Make plot
   plot <- ggplot(melted, aes(month, value, fill = variable, label = value)) +   
     geom_col() + 
-    geom_text(size = 3, position = position_stack( vjust = 0.5 ), color = "white", check_overlap=TRUE) +
     ggtitle(title) +
     ylab("Anzahl") + xlab("Monat") +
     scale_fill_manual(values=c("#824f8c", "#e64823"), labels=c('Page impressions - visits', 'Visits'))+
