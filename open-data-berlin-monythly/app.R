@@ -43,7 +43,25 @@ generateData <- function(months, dataPage, mode = "pi"){
   }
   return(vals)
 }
+
+# Removes rows with the NA for the months before the first value (if there are no visits)
+remove_rows <- function(frame) {
+  removed_row <- c()
+  finished = FALSE
+  for (row in row.names(frame)) {
+    if(!finished & frame[row,'variable'] == "Visits") {
+
+      if(any(is.na(frame[row, 'value']))){
+        removed_row <- c(removed_row, frame[row, 'month'])
+      } else {
+        finished = TRUE
+      }
+
+    }
+  }
   
+  return(removed_row)
+}
 
 # Function for chart: It will display a dodged bar chart for visits and page impressions
 fun_bar_chart <- function(data_enr_temp, page) {
@@ -57,17 +75,21 @@ fun_bar_chart <- function(data_enr_temp, page) {
   page_data['Visits'] <- generateData(page_data$month, data_enr_temp, "v")
   page_data['Page impressions - visits'] <- page_data['Impressions'] - page_data['Visits']
   
-  # Remove rows with na
-  #page_data <- na.omit(page_data)
-  
   # Melt the data
   melted <- melt(page_data[,c("month", c("Page impressions - visits", "Visits"))], id="month")
   
+  # Remove the rows until the first value
+  remove_rows <- remove_rows(melted)
+  if(!is.null(remove_rows)){
+    melted <- melted[-which(melted$month %in% remove_rows), ]
+  }
+
+  # View(melted)
   title <- paste("Page impressions und visits von", page, "pro Monat", sep = " ")
   # Make plot
   plot <- ggplot(melted, aes(month, value, fill = variable, label = value)) +   
     geom_col() + 
-    geom_text( size = 3, position = position_stack( vjust = 0.5 ), color = "white") +
+    geom_text(size = 3, position = position_stack( vjust = 0.5 ), color = "white", check_overlap=TRUE) +
     ggtitle(title) +
     ylab("Anzahl") + xlab("Monat") +
     scale_fill_manual(values=c("#824f8c", "#e64823"), labels=c('Page impressions - visits', 'Visits'))+
