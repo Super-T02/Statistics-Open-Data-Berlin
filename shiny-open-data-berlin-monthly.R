@@ -7,12 +7,13 @@
 # - Danach werden Funktionen definiert, die für das erzeugen des Diagramms notwendig sind
 # - Zum Schluss werden die Daten geladen und die Shiny App gestartet.
 #
-# Ergebnis die Shiny App ermöglicht eine Seite auszuwählen, wobei sie nach Benutzung sortiert sind. Dann wird das
+# Ergebnis: 
+# Die Shiny App ermöglicht eine Seite auszuwählen, wobei sie nach Benutzung sortiert sind. Dann wird das
 # Diagramm mit den monatlichen Visits und der Differenz von Visits zu Impressions dargestellt. Es werden immer alle
 # Monate nach dem ersten Monat mit einem Wert bis zum Oktober 2022 angezeigt.
 ####### Wichtige Informationen ENDE ####### 
 
-source("../Open-Data-Berlin.R")
+source("Open-Data-Berlin.R")
 setwd("C:/Users/tomfr/OneDrive/Studium/UNI/5. Semester/Data Sience/Prüfung")
 library(tidyverse)
 library(ggplot2)

@@ -8,7 +8,7 @@
 # - Zum Schluss werden die einzelnen Aufgaben bearbeitet und im Lösungsabschnitt beantwortet
 # 
 # Hinweis: Aufgabe c) wird nicht in diesem Skript beantwortet. Hierfür wird ein extra
-# Shiny Skript gestartet (TODO: SKRIPT). Die Shiny App benutzt aber die hier definierten
+# Shiny Skript gestartet (Name: shiny-open-data-berlin-monthly.R). Die Shiny App benutzt aber die hier definierten
 # Funktionen zum bereinigen und aggregieren der Daten.
 
 
@@ -228,7 +228,7 @@ fun_bar_chart <- function(data_enr_temp, number_to_display, decreasing = T, orde
   
   # Get the 10 highest/lowest per class
   top10 <- data_enr_temp[which(data_enr_temp$page %in% head(data_enr_temp, number_to_display)$page),]
-  top10 <- top10[order(top10[orderBy], decreasing = T), ]
+  top10 <- top10[order(top10[orderBy], decreasing = F), ]
   # Make two fields for every variable of each page
   melted <- melt(top10[,c("page", "sum_pi", "sum_v")], id="page")
   
@@ -437,7 +437,7 @@ solution_B["list_of_elements"]
 
 #-------------------------------------------------------------------------------
 # Solution of c)
-# Please start the shiny app
+# Bitte starten Sie die Shiny app [shiny-open-data-berlin-monthly.R]
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
@@ -471,5 +471,11 @@ solution_E <- task_E(data_enr)
 # die Seiten ausgegeben werden, die im ersten Monat mindestens einen Visit haben.
 # Folgende Ausgabe stellt diese Seiten dar:
 solution_E['list_beginners']
+#-------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+# Solution of f) Bonusinformationen für Argumentation
+# In der folgenden Shiny App wurde der Datensatz erkundet und Informationen für eine gut Argumentation gesucht.
+# Bitte starten Sie die Shiny app [shiny-open-data-berlin-most-used-by-month.R]
 #-------------------------------------------------------------------------------
 ###### SOLUTIONS END ###### 

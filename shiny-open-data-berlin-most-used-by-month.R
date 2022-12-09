@@ -1,14 +1,26 @@
+####### Wichtige Informationen ####### 
+# Das Folgende Skript behandelt die Prüfungsaufgabe des Kurses Data Science
+# an der DHBW Stuttgart im Studiengang B. Sc. Informatik.
 #
-# This is a Shiny web application. You can run the application by clicking
-# the 'Run App' button above.
+# Wichtig: Diese Datei ist nicht explizit Teil einer Aufgabenstellung, und dient nur zum Erkunden des Datensatzes und um
+# Argumente für Open Data im allgemeinen zu finden.
 #
-# Find out more about building applications with Shiny here:
+# Das Skript ist wie folgt aufgeteilt:
+# - zu Beginn wird das Skript, das die Funktionen zum bereinigen und aggregieren der Daten enthält geladen
+# - Danach werden Funktionen definiert, die für das erzeugen des Diagramms notwendig sind
+# - Zum Schluss werden die Daten geladen und die Shiny App gestartet.
 #
-#    http://shiny.rstudio.com/
-#
+# Ergebnis: 
+# Die Shiny App ermöglicht einen Monat auszuwählen, für den die meist benutzten Seiten bei Page Impressions dargestellt
+# werden. Es gibt auch die Möglichkeit die Anzahl an dargestellten Seiten zu erhöhen.
+####### Wichtige Informationen ENDE ####### 
 
-source("../Open-Data-Berlin.R")
+source("Open-Data-Berlin.R")
 library(shiny)
+library(tidyverse)
+library(ggplot2)
+library(tidyr)
+library(reshape2)
 
 
 ####### Define functions for the app START #######
@@ -36,7 +48,7 @@ fun_bar_chart <- function(data_enr_temp, number_to_display, col, month = "", dec
   
   # Get the 10 highest/lowest per class
   top10 <- data_enr_temp[which(data_enr_temp$page %in% head(data_enr_temp, number_to_display)$page),]
-  top10 <- top10[order(top10[col[1]], decreasing = T), ]
+  top10 <- top10[order(top10[col[1]], decreasing = F), ]
   # Make two fields for every variable of each page
   melted <- melt(top10[,c("page", col[1], col[2])], id="page")
   
@@ -143,4 +155,3 @@ server <- function(input, output) {
 # Run the application 
 shinyApp(ui = ui, server = server)
 ####### APP END #######
-
