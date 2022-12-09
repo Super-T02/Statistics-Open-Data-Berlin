@@ -116,7 +116,7 @@ substituteData <- function(data) {
   data_sub$page <- gsub("(√[^A-Za-z]*?º)|%C3%BC", "ü", data_sub$page) # ü
   data_sub$page <- gsub("(√[^A-Za-z]*?∂)|%C3%B6", "ö", data_sub$page) # ö
   data_sub$page <- gsub("(√[^A-Za-z]*?§(A4)?)|(%C3%)?(A4)|(¬® a)|(&auml;)|(ÔøΩ)|(aÃà)|( Ãà)", "ä", data_sub$page) # ä
-  data_sub$page <- gsub("¬Æ", "®", data_sub$page) # ®
+  data_sub$page <- gsub("¬Æ", "", data_sub$page) # ® -> but remove because no sense
   data_sub$page <- gsub("¬ß", "§", data_sub$page) # §
   data_sub$page <- gsub("eurm¬≤", "EUR/m²", data_sub$page) # €
   
@@ -167,7 +167,51 @@ substituteData <- function(data) {
   data_sub$page <- gsub("-0$", "", data_sub$page) # Filter Zeros
   data_sub <- data_sub[-which(data_sub$page == 'a'), ] # No sense
   data_sub <- data_sub[-which(data_sub$page == '1c35e89f-5725-4d46-bc5a-229'), ] # No sense
-  
+  data_sub <- data_sub[-which(data_sub$page == 'bGlzdGUtZG'), ] # No sense
+  data_sub <- data_sub[-which(data_sub$page == 'data'), ] # No sense
+  data_sub <- data_sub[-which(data_sub$page == 'daten.b'), ] # No sense
+  data_sub <- data_sub[-which(data_sub$page == 'l'), ] # No sense
+  data_sub <- data_sub[-which(data_sub$page == 'aktu..'), ] # No sense
+  data_sub <- data_sub[-which(data_sub$page == 'ra'), ] # No sense
+  data_sub <- data_sub[-which(data_sub$page == 'dmJiLWZhaH'), ] # No sense
+  data_sub <- data_sub[-which(data_sub$page == 'de-'), ] # No sense
+  data_sub <- data_sub[-grep("*[.]json", data_sub$page), ] # No sense
+  data_sub <- data_sub[-grep("*[.]html", data_sub$page), ] # No sense
+  data_sub <- data_sub[-grep("*[.]pdf", data_sub$page), ] # No sense
+  data_sub <- data_sub[-grep("*[.]csv", data_sub$page), ] # No sense
+  data_sub <- data_sub[-grep("*[.]rdf", data_sub$page), ] # No sense
+  data_sub <- data_sub[-grep("*[.]xml", data_sub$page), ] # No sense
+  data_sub <- data_sub[-grep("www[.]*", data_sub$page), ] # No sense
+  data_sub$page[data_sub$page == "berliner5weihnachtsmärkt"] <- "berliner-weihnachtsmärkte"
+  data_sub$page[data_sub$page == "berliner7und7brandenburger7volks7und7straßenfest"] <- "berliner-und-brandenburger-volks-und-straßenfest"
+  data_sub$page[data_sub$page == "open5streetmap5daten5für5berlin"] <- "open-streetmap-daten-für-berlin"
+  data_sub$page[data_sub$page == "openstreetmap6daten6für6berlin"] <- "open-streetmap-daten-für-berlin"
+  data_sub$page[data_sub$page == "openstreetmap"] <- "open-streetmap-daten-für-berlin"
+  data_sub$page[data_sub$page == "aktuelle5ausschreibungen5nach5vol5vob5vof5oder5für5interessenbekundungsverfahren"] <- "aktuelle-ausschreibungen-nach-vol-vob-vof-oder-für-interessenbekundungsverfahren"
+  data_sub$page[data_sub$page == "einwohnerinnen5und5einwohner5berlin5lor5planungsräumen5nach5wohndauer5am531122014"] <- "einwohnerinnen-und-einwohner-berlin-lor-planungsräumen-nach-wohndauer-am-31122014"
+  data_sub$page[data_sub$page == "ortsteil5geometrien5berlin"] <- "ortsteil-geometrien-berlin"
+  data_sub$page[data_sub$page == "BCltiges-ergebnis"] <- "gültiges-ergebnis"
+  data_sub$page[data_sub$page == "opnv-vorrangnetz-wfs-7"] <- "opnv-vorrangnetz-wfs"
+  data_sub$page[data_sub$page == "adressen-berlin-wfsbrdie"] <- "adressen-berlin-wfs"
+  data_sub$page[data_sub$page == "adressen-kindertagespflegestellen-steglitz-zehlendorffdsfsd"] <- "adressen-kindertagespflegestellen-steglitz-zehlendorf"
+  data_sub$page[data_sub$page == "covid-19-berlin-verteilung-den-bezirken-gesamtuebersicht"] <- "covid-19-berlin-verteilung-den-bezirken-gesamtübersicht"
+  data_sub$page[data_sub$page == "familienzentren-kinder-undjugendfreizeiteinrichtungen-im-bezirk-friedrichshain"] <- "familienzentren-kinder-und-jugendfreizeiteinrichtungen-im-bezirk-friedrichshain"
+  data_sub$page[data_sub$page == "familienzentren-kinder-und-jugen"] <- "familienzentren-kinder-und-jugendfreizeiteinrichtungen-im-bezirk-friedrichshain"
+  data_sub$page[data_sub$page == "liste-derbadestellen-badegewaässerqualität"] <- "liste-der-badestellen-badegewaässerqualität"
+  data_sub$page[data_sub$page == "Liste-der-häufigen-vornamen-2018"] <- "liste-der-häufigen-vornamen-2018"
+  data_sub$page[data_sub$page == "Straßenverzeichnis"] <- "straßenverzeichnis"
+  data_sub$page[data_sub$page == "strat-lärmkarte-l_n-nacht-index-flugverkehr-2012-umweltatlas-wms"] <- "strat-lärmkarte-ln-nacht-index-flugverkehr-2012-umweltatlas-wms"
+  data_sub$page[data_sub$page == "strat-larmkarte-l_den-tag-abend-nacht-index-strassenverkehr-2017-umweltatlas-atom-84"] <- "strat-lärmkarte-lden-tag-abend-nacht-index-strassenverkehr-2017-umweltatlas-atom"
+  data_sub$page[data_sub$page == "tempolimits-wms-2fds"] <- "tempolimits-wms"
+  data_sub <- data_sub[-which(data_sub$page == 'L3N5czExLXByb2QvbGFnZXNvL2dlc3VuZGhlaXQvZ2VzdW5kaGVpdHNzY2h1dHovYmFkZWdld2Flc3Nlci9saXN0ZS1kZXItYmFkZXN0ZWxsZW4vZ3J1ZW5fYS5qcGc.jpg'), ] # No sense
+  data_sub <- data_sub[-which(data_sub$page == 'csv'), ] # No sense
+  data_sub <- data_sub[-which(data_sub$page == 'dom'), ] # No sense
+  data_sub <- data_sub[-which(data_sub$page == 'einwohnerinnen-und'), ] # No sense
+  data_sub <- data_sub[-which(data_sub$page == 'package_lis'), ] # No sense
+  data_sub <- data_sub[-which(data_sub$page == 'package_show'), ] # No sense
+  data_sub <- data_sub[-which(data_sub$page == 'popel'), ] # No sense
+  data_sub <- data_sub[-which(data_sub$page == 'ZW5lcmdpZX'), ] # No sense
+
   return(data_sub)
 }
 ####### REMOVE ESCAPED LETTERS AND CORRUPT DATA END ####### 
@@ -411,8 +455,8 @@ solution_B["num_of_zero_visits"]
 # Summe der Page Impressions kleiner als 100.
 solution_B["histogram"]
 # Man sieht, dass  sich im Bereich von 0 bis 10 Page Impressions sehr viele Seiten
-# sammeln. Es existieren knapp über 600 Datensätze, die nur eine  und
-# ca. 350, die zwei Page Impression haben. Das ist fast ein drittel der bereinigten
+# sammeln. Es existieren knapp über 550 Datensätze, die nur eine  und
+# ca. 360, die zwei Page Impression haben. Das ist fast ein drittel der bereinigten
 # und danach aggregierten Daten. Weil dieser Datensatz nicht die komplette Zeit
 # von Open Data Berlin abdeckt und erst im Februar 2019 anfängt, könnten diese Seiten
 # schon früher existiert haben und öfters aufgerufen worden sein. Zum Beispiel die
@@ -454,7 +498,7 @@ solution_D["pi_smaller_v"]
 # wie Visits haben:
 solution_D["pi_equal_v"]
 nrow(data_enr)
-# Daraus folgt, dass knapp die Hälfte der Seiten genau gleich viele Page Impressions und
+# Daraus folgt, dass fast die Hälfte der Seiten genau gleich viele Page Impressions und
 # Visits hat. Das liegt vermutlich mit unter daran, dass knapp ein drittel der Daten
 # genau einen Page Visit und eine Page Impression haben. Man könnte also vermuten,
 # dass mit mehr Visits mehr Page Impressions kommen so, dass es mehr Impressions als 
