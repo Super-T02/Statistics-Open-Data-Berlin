@@ -28,15 +28,10 @@ loadData <- function(){
   return(data)
 }
 
-# After looking into the data:
-# 1. The Names of the pages with ä,ö,ü,ß are escaped --> First step is to remove the escape
-# 2. Every Month has two columns: pi (Page impressions), v (Page Visits)
-# 3. Many NA's
-
 ####### REMOVE ESCAPED LETTERS AND CORRUPT DATA START #######
 substituteData <- function(data) {
   
-  # Next: Start with 1. step and remove escaped letters
+  # Start with 1. step and remove escaped letters
   # - √º = ü
   # - √∂ = ö
   # - √§ = ä
@@ -401,34 +396,27 @@ data_enr <- loadData() %>% substituteData() %>% aggregateData() %>% enrichData()
 #-------------------------------------------------------------------------------
 # a) Die 10 meist benutzen Datensätze: 
 solution_A <- task_A(data_enr); solution_A
-# Die Grafik zeigt die
-# 10 meist genutzten Seiten/Dienste von Open Data Berlin. Dabei sind
-# die Page Visits und die Anzahl der Page Impressions dargestellt.
+# Die Grafik zeigt die 10 meist genutzten Seiten/Dienste von Open Data Berlin. Dabei sind die Page Visits und die Anzahl
+# der Page Impressions dargestellt.
 # 
-# Unter einer Page Impression versteht man die Aufrufe einer Seite.
-# Jedes nicht automatische neuladen der Seite wird dabei getrackt.
-# Dazu zählt das erste mal öffnen, erneute laden, oder öffnen nach
-# einem längeren Zeitraum [1-3]. Die Page Visits geben zwar auch
-# Seitenaufrufe an aber nur der erste in einer Session. Wobei eine
-# Session nach einer Inaktivität von 30 Minuten aufhört [1-3]. Somit
-# ist ein Visit der erste Besuch einer Seite. Wenn der Nutzer
-# innerhalb von der Session (endet nach 30 Minuten Inaktivität) die
-# Seite erneut öffnet bzw. lädt werden keine visits erzeugt sondern
-# nur Impressions. Schließlich lässt sich sagen, dass ein Page Visit
-# auch immer eine Page Impression auslöst [1-3].
+# Unter einer Page Impression versteht man die Aufrufe einer Seite. Jedes nicht automatische neuladen der Seite wird
+# dabei getrackt. Dazu zählt das erste mal öffnen, erneute laden, oder öffnen nach einem längeren Zeitraum [1-3]. Die
+# Page Visits geben zwar auch Seitenaufrufe an aber nur der erste in einer Session. Wobei eine Session nach einer
+# Inaktivität von 30 Minuten aufhört [1-3]. Somit ist ein Visit der erste Besuch einer Seite. Wenn der Nutzer innerhalb
+# von der Session (endet nach 30 Minuten Inaktivität) die Seite erneut öffnet bzw. lädt werden keine visits erzeugt
+# sondern nur Impressions. Schließlich lässt sich sagen, dass ein Page Visit auch immer eine Page Impression auslöst
+# [1-3].
 #
-# Aufgrund dieser Definition von Page Impressions und Visits wurden in
-# Plot 1 (p1) die Seiten nach ihrer Summe von page impressions
-# geordnet. Weil Seiten mit mehr page impressions wurden häufiger
-# geöffnet und somit potentiell mehr benutzt.
+# Aufgrund dieser Definition von Page Impressions und Visits wurden in Plot 1 (solution_A) die Seiten nach ihrer Summe von page
+# impressions geordnet. Außerdem wurden Seiten mit mehr page impressions häufiger geöffnet und somit potentiell mehr
+# benutzt.
 #
-# Außerdem wurden für die Grafik kaputte Datensätze entfernt und
-# maskierte Buchstaben ersetzt. Abgesehen davon wurden Seitennamen die
-# mit einer fortlaufenden Nummer Enden als eine Seite Betrachtet, da
-# nach einer Recherche keine fortlaufenden nummern in Seitennamen bei
-# Open Data Berlin gefunden wurden. Es ist also von einem Skript Fehler
-# auszugehen. Hingegen Namen die mit einem Datum oder einer Jahreszahl
-# enden wurden beibehalten.
+# Zudem wurden für die Grafik kaputte Datensätze entfernt und maskierte Buchstaben ersetzt. Abgesehen davon wurden
+# Seitennamen die mit einer fortlaufenden Nummer Enden als eine Seite Betrachtet, da nach einer Recherche keine
+# fortlaufenden nummern in Seitennamen bei Open Data Berlin gefunden wurden. Es ist also von einem Skript Fehler
+# auszugehen. Hingegen Namen die mit einem Datum oder einer Jahreszahl enden wurden beibehalten. Auch einfache Fehler,
+# wie zusätzliche Leerzeichen oder fehlende Spiegelstriche wurden erstetzt. Danach wurden Datensätze die offentsichtlich
+# keine Seite sind entfernt. Dazu gehören z.B. Namen mit der Endung .pdf, .json oder .csv.
 #
 # Referenzen Webtrekk, page visits und impression: 
 # [1] https://documentation.mapp.com/1.0/en/basic-metrics-page-impressions-visits-visitors-7211156.html (letzter Aufruf: 05.12.2022)
@@ -440,35 +428,30 @@ solution_A <- task_A(data_enr); solution_A
 # Solution of b) Auskunft über die 10 am wenigsten benutzten Dienste
 solution_B <- task_B(data_enr)
 
-# Als ersten Gedanken über die (zehn) am wenigsten benutzten Dienste denkt man,
-# dass verschiedene Dienste 0 visits und damit 0 impressions haben müssen. Doch
-# der Datensatz enthält keinen Dienst der nicht besucht oder aufgerufen wurde.
+# Als ersten Gedanken über die (zehn) am wenigsten benutzten Dienste denkt man, dass verschiedene Dienste 0 visits und
+# damit 0 impressions haben müssen. Doch der Datensatz enthält keinen Dienst der nicht besucht oder aufgerufen wurde.
 # Folgende Abfrage bestätigt das:
 solution_B["num_of_zero_visits"]
-# Das kann darauf zurückzuführen sein, dass das Skript einen Dienst zur Liste 
-# nur dann hinzufügt, wenn er aufgerufen wird. Es ist folglich schwierig
-# auf Basis der vorhandenen Daten die 10 wenigsten Datensätze zu finden, weil
-# man nicht davon ausgehen kann, dass man alle vorhandenen Dienste hat.
+# Das kann darauf zurückzuführen sein, dass das Skript einen Dienst zur Liste nur dann hinzufügt, wenn er aufgerufen
+# wird oder es wurden zufälligerweise alle Seiten einaml aufgerufen. Es ist folglich schwierig auf Basis der vorhandenen
+# Daten die 10 wenigsten Datensätze zu finden, weil man nicht davon ausgehen kann, dass man alle vorhandenen Dienste
+# hat.
 #
-# Ein weiterer Punkt ist, dass viele Daten existieren, die nur sehr wenige Page
-# Impressions haben. Das folgende Histogram zeigt, die Anzahl an Seiten für die
-# Summe der Page Impressions kleiner als 100.
+# Ein weiterer Punkt ist, dass viele Daten existieren, die nur sehr wenige Page Impressions haben. Das folgende
+# Histogram zeigt, die Anzahl an Seiten für die Summe der Page Impressions kleiner als 100.
 solution_B["histogram"]
-# Man sieht, dass  sich im Bereich von 0 bis 10 Page Impressions sehr viele Seiten
-# sammeln. Es existieren knapp über 550 Datensätze, die nur eine  und
-# ca. 360, die zwei Page Impression haben. Das ist fast ein drittel der bereinigten
-# und danach aggregierten Daten. Weil dieser Datensatz nicht die komplette Zeit
-# von Open Data Berlin abdeckt und erst im Februar 2019 anfängt, könnten diese Seiten
-# schon früher existiert haben und öfters aufgerufen worden sein. Zum Beispiel die
-# Seite "arbeitslose-veränderung-2013-2014-wms" hat 2 Page Impressions und Visits und
-# wurde am 31.12.2015 veröffentlicht und auch das letzte mal aktualisiert [4].
-# Andere Datensätze, wie zum Beispiel "anzahl-arbeitsloser-frauen-berlin-1995-2010"
-# existieren hingegen heutzutage nicht mehr (bzw. haben vielleicht nie existiert)
-# und können deswegen nicht (mehr) aufgerufen werden [5].
+# Man sieht, dass  sich im Bereich von 0 bis 10 Page Impressions sehr viele Seiten sammeln. Es existieren knapp über 550
+# Datensätze, die nur eine und ca. 360, die zwei Page Impression haben. Das ist fast ein drittel der bereinigten und
+# danach aggregierten Daten. Weil dieser Datensatz nicht die komplette Zeit von Open Data Berlin abdeckt und erst im
+# Februar 2019 anfängt, könnten diese Seiten schon früher existiert haben und öfters aufgerufen worden sein. Zum
+# Beispiel die Seite "arbeitslose-veränderung-2013-2014-wms" hat 2 Page Impressions und Visits und wurde am 31.12.2015
+# veröffentlicht und auch das letzte mal aktualisiert [4]. Andere Datensätze, wie zum Beispiel
+# "anzahl-arbeitsloser-frauen-berlin-1995-2010" existieren hingegen heutzutage nicht mehr (bzw. haben vielleicht nie
+# existiert) und können deswegen nicht (mehr) aufgerufen werden [5].
 solution_B["example_page"]
 
-# Zusammenfassung kann gesagt werden, dass es im Datensatz Seiten gibt, die
-# eine Page Visit und Page Impression habe (siehe nächste Ausgabe).
+# Zusammenfassung kann gesagt werden, dass es im Datensatz Seiten gibt, die einen Page Visit und Page Impression habe
+# (siehe nächste Ausgabe).
 solution_B["list_of_elements"]
 # Sie sind im Datensatz die am wenigst benutzten Seiten. Aber müssen nicht der 
 # Realität entsprechen, weil das Tracking Tool gewechselt wurde und nicht alle
