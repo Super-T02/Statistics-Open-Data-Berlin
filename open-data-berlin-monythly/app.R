@@ -3,13 +3,14 @@
 # an der DHBW Stuttgart im Studiengang B. Sc. Informatik.
 #
 # Das Skript ist wie folgt aufgeteilt:
-# - zu Beginn werden benötigte Bibliotheken geladen
-# - Danach werden die Daten geladen und bereinigt, aggregiert bzw. Duplikate entfernt und um Informationen ergänzt
-# - Zum Schluss werden die einzelnen Aufgaben bearbeitet und im Lösungsabschnitt beantwortet
-# 
-# Hinweis: Aufgabe c) wird nicht in diesem Skript beantwortet. Hierfür wird ein extra
-# Shiny Skript gestartet (TODO: SKRIPT). Die Shiny App benutzt aber die hier definierten
-# Funktionen zum bereinigen und aggregieren der Daten.
+# - zu Beginn wird das Skript, das die Funktionen zum bereinigen und aggregieren der Daten enthält geladen
+# - Danach werden Funktionen definiert, die für das erzeugen des Diagramms notwendig sind
+# - Zum Schluss werden die Daten geladen und die Shiny App gestartet.
+#
+# Ergebnis die Shiny App ermöglicht eine Seite auszuwählen, wobei sie nach Benutzung sortiert sind. Dann wird das
+# Diagramm mit den monatlichen Visits und der Differenz von Visits zu Impressions dargestellt. Es werden immer alle
+# Monate nach dem ersten Monat mit einem Wert bis zum Oktober 2022 angezeigt.
+####### Wichtige Informationen ENDE ####### 
 
 source("../Open-Data-Berlin.R")
 setwd("C:/Users/tomfr/OneDrive/Studium/UNI/5. Semester/Data Sience/Prüfung")
@@ -73,10 +74,10 @@ fun_bar_chart <- function(data_enr_temp, page) {
   )
   page_data['Impressions'] <- generateData(page_data$month, data_enr_temp, "pi")
   page_data['Visits'] <- generateData(page_data$month, data_enr_temp, "v")
-  page_data['Page impressions - visits'] <- page_data['Impressions'] - page_data['Visits']
+  page_data['Differenz aus Page Impressions und Visits'] <- page_data['Impressions'] - page_data['Visits']
   
   # Melt the data
-  melted <- melt(page_data[,c("month", c("Page impressions - visits", "Visits"))], id="month")
+  melted <- melt(page_data[,c("month", c("Differenz aus Page Impressions und Visits", "Visits"))], id="month")
   
   # Remove the rows until the first value
   remove_rows <- remove_rows(melted)
@@ -90,7 +91,7 @@ fun_bar_chart <- function(data_enr_temp, page) {
     geom_col() + 
     ggtitle(title) +
     ylab("Anzahl") + xlab("Monat") +
-    scale_fill_manual(values=c("#824f8c", "#e64823"), labels=c('Page impressions - visits', 'Visits'))+
+    scale_fill_manual(values=c("#824f8c", "#e64823"), labels=c('Differenz aus Page Impressions und Visits', 'Visits'))+
     theme_linedraw()+
     labs(fill='') +
     theme(
@@ -150,4 +151,3 @@ server <- function(input, output) {
 # Run the application 
 shinyApp(ui = ui, server = server)
 ####### APP END #######
-
