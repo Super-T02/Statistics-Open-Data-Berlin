@@ -22,7 +22,7 @@ library(reshape2)
 
 # Read the data from csv with the ";" as separator
 loadData <- function(){
-  data <- read.csv("./open-data_berlin_Nutzerdaten.csv", sep = ";")
+  data <- read.csv("./data/open-data_berlin_Nutzerdaten.csv", sep = ";")
   # str(data)
   # View(data)
   return(data)
